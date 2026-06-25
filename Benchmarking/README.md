@@ -146,5 +146,5 @@ Frame rate is highly dependent on hardware capabilities. Below are the speed com
 
 ## Additional Resources
 
-* **Complete Results & Output Sample Images:** You can access high-resolution output sample comparisons, full log files, and intermediate charts at our shared drive folder:
-  [🔗 Google Drive: Benchmarking Full Results](https://drive.google.com/drive/folders/YOUR_GOOGLE_DRIVE_FOLDER_LINK_HERE) *(Replace this link once available)*
+* **Complete Results & Output Sample Images:** You can access high-resolution output sample comparisons, full log files at our shared drive folder:
+  [🔗 Google Drive: Benchmarking Full Results](https://drive.google.com/drive/folders/1DdzcnSLQPj7ml81z7FJ1bOuxpQtP6J1o?usp=drive_link) 
