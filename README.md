@@ -44,7 +44,7 @@ We deployed and benchmarked four different ISPs (FastOpenISP, InfiniteISP, SYENe
 * **Hardware Evaluated:** Raspberry Pi 3, Raspberry Pi 5, Intel Neural Compute Stick 2 (NCS2).
 * **Metrics Analyzed:** Precise latency (FPS) vs visual reconstruction quality (PSNR/SSIM).
 
-### 2. High-Performance CUDA GPU Acceleration
+### 2. High-Performance CUDA GPU Acceleration(./Cuda%C%implementation%of%SYENet%Slim%and%SYENet
 To address the heavy computational overhead of neural ISPs, we manually translated the lightweight SYENet-Slim architecture from Python into highly optimized **CUDA C**.
 * **Deployment:** Natively running on an NVIDIA Quadro T1000 GPU (896 CUDA cores).
 * **Performance:** Massive acceleration (527 FPS) while maintaining pristine image quality (24.85 dB PSNR).
