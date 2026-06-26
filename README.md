@@ -47,7 +47,7 @@ We deployed and benchmarked four different ISPs (FastOpenISP, InfiniteISP, SYENe
 ### 2. [High-Performance CUDA GPU Acceleration](./Cuda%C%implementation%of%SYENet%Slim%and%SYENet)
 To address the heavy computational overhead of neural ISPs, we manually translated the lightweight SYENet-Slim architecture from Python into highly optimized **CUDA C**.
 * **Deployment:** Natively running on an NVIDIA Quadro T1000 GPU (896 CUDA cores).
-* **Performance:** Massive acceleration (527 FPS) while maintaining pristine image quality (24.85 dB PSNR).
+* **Performance:** Massive acceleration (641 FPS) while maintaining pristine image quality (24.85 dB PSNR).
 
 ### 3. Custom FPGA Hardware Design
 We engineered a custom hardware architecture for the SYENet Slim pipeline designed to operate within strict embedded constraints.
