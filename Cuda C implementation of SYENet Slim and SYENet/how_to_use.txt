@@ -1,0 +1,115 @@
+HOW TO USE — SYENet ISP (Complete Setup Guide)
+===============================================
+
+WHAT IS IN THIS ARCHIVE
+------------------------
+  archive/
+  ├── model_best.pkl          Original pretrained weights (SYEISPNet, 524 KB)
+  ├── slim_model.pt           Slim (reparameterized) PyTorch model (26.6 KB)
+  ├── slim_model.onnx         ONNX export (25.3 KB)
+  ├── slim_model.tflite       TFLite float32 (29.1 KB)
+  ├── original_model.tflite   TFLite float32 original (419.1 KB)
+  ├── orig_model.onnx         ONNX original (407 KB)
+  │
+  ├── syenet/                 Python model code + training/inference scripts
+  ├── cuda_isp/               Standalone CUDA C inference (no Python needed)
+  ├── cuda_benchmark/         Full 4-model Python benchmark + plots + tables
+  │   ├── tools/              Python benchmark scripts (03b, 03c, 04, 05)
+  │   └── results/            CSV data, 9 plots, 5 publication tables
+  │
+  ├── dataset/                MAI 2021 ISP Challenge test images (place here)
+  ├── how_to_use.txt          This file
+  ├── how_to_run.txt          Step-by-step run instructions
+  └── what_it_does.txt        Architecture and performance explanation
+
+
+PREREQUISITES
+-------------
+You need either (A) Python for the benchmark tools, or (B) just CUDA for the
+standalone CUDA C program. Both are explained below.
+
+(A) PYTHON INFERENCE / BENCHMARKING
+-------------------------------------
+  Software:
+    - Python 3.10  (NOT 3.11+ — PyTorch wheels require 3.10)
+    - NVIDIA GPU with CUDA 12.1 drivers
+
+  Install commands (run once):
+    py -3.10 -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+    py -3.10 -m pip install Pillow numpy opencv-python onnxruntime
+    py -3.10 -m pip install tensorflow --user
+    py -3.10 -m pip install ai-edge-litert --user
+    py -3.10 -m pip install onnx2tf psutil sng4onnx onnxsim --user
+    py -3.10 -m pip install onnx-graphsurgeon --extra-index-url https://pypi.ngc.nvidia.com
+
+  Verify GPU works:
+    py -3.10 -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"
+
+(B) STANDALONE CUDA C (already compiled — just run the .exe)
+--------------------------------------------------------------
+  The compiled binary is at:
+    cuda_isp\syenet_isp.exe
+
+  No Python, no PyTorch, no TensorRT needed.
+  Only requires: CUDA runtime DLLs (installed with any NVIDIA driver).
+
+  To recompile from source:
+    - CUDA Toolkit 13.3   (already installed at C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.3\)
+    - Visual Studio 2022 Build Tools (already installed)
+    - Run:  cuda_isp\compile.bat
+
+
+DATASET LAYOUT
+--------------
+Place the MAI 2021 ISP Challenge test dataset here:
+
+  archive\dataset\test\mediatek_raw\   <-- RAW Bayer input PNGs (uint16, 256×256)
+  archive\dataset\test\fujifilm\        <-- Ground truth RGB PNGs (256×256)
+
+Both folders must contain files with matching names (same stem, .png extension).
+The benchmark scripts find matching pairs automatically.
+
+Without the dataset you can still run single-image inference using any 256×256
+uint16 RAW Bayer PNG (see how_to_run.txt, Section 5).
+
+INPUT FORMAT
+------------
+  RAW input:
+    - PNG file, uint16 (16-bit grayscale), single channel
+    - Bayer pattern RGGB, 256×256 pixels total
+    - 12-bit sensor data stored in 16-bit container (max value ≈ 4095)
+
+  Bayer → RGGB unpacking (done automatically by all scripts):
+    raw (256×256) → rggb (4×128×128), normalised by /4095.0
+    Channels: [0]=R  [1]=G (top-right)  [2]=G (bottom-left)  [3]=B
+
+  Ground truth:
+    - Fujifilm camera JPEG/PNG, already processed, 256×256 RGB
+    - Loaded as float32 in [0,1] range
+
+OUTPUT FORMAT
+-------------
+  PyTorch / TFLite:  RGB image, 256×256, float32 [0,1] or uint8 [0,255]
+  CUDA C program:    float32 binary file, CHW layout (3×256×256)
+                     → use verify.py to convert to PNG and compute PSNR
+
+
+CONFIGURATION
+-------------
+  The syenet/ code uses syenet/config/isp.yaml for training configuration.
+  For inference-only use (what we do here), no config file is needed —
+  all scripts load weights directly from file paths.
+
+  To change which model is used in run_inference.py, edit the top of the script:
+    MODEL_PATH = r'C:\Users\aujla\Desktop\archive\slim_model.pt'
+
+
+KNOWN WORKING ENVIRONMENT
+--------------------------
+  OS:     Windows 11 Pro
+  GPU:    NVIDIA Quadro T1000 (4 GB, SM 7.5, CUDA 12.1)
+  CUDA:   13.3.0 (nvcc), runtime 12.1 (PyTorch)
+  Python: 3.10.x
+  PyTorch: 2.5.1+cu121
+  TF:     2.x + ai-edge-litert
+  MSVC:   VS 2022 Build Tools (for nvcc compilation)

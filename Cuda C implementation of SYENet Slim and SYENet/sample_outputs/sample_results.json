@@ -1,0 +1,102 @@
+[
+  {
+    "idx": 1,
+    "file": "100.png",
+    "psnr_orig": 18.197,
+    "psnr_nm": 18.197,
+    "diff": 0.0,
+    "lat_orig": 2.021,
+    "lat_nm": 1.88,
+    "path": "C:\\Users\\aujla\\Desktop\\archive\\sample_outputs\\sample_01_100.png"
+  },
+  {
+    "idx": 2,
+    "file": "12054.png",
+    "psnr_orig": 19.865,
+    "psnr_nm": 19.865,
+    "diff": -0.0,
+    "lat_orig": 2.196,
+    "lat_nm": 2.203,
+    "path": "C:\\Users\\aujla\\Desktop\\archive\\sample_outputs\\sample_02_12054.png"
+  },
+  {
+    "idx": 3,
+    "file": "14259.png",
+    "psnr_orig": 34.023,
+    "psnr_nm": 34.023,
+    "diff": -0.0,
+    "lat_orig": 2.196,
+    "lat_nm": 2.352,
+    "path": "C:\\Users\\aujla\\Desktop\\archive\\sample_outputs\\sample_03_14259.png"
+  },
+  {
+    "idx": 4,
+    "file": "16538.png",
+    "psnr_orig": 23.882,
+    "psnr_nm": 23.882,
+    "diff": -0.0,
+    "lat_orig": 1.913,
+    "lat_nm": 1.877,
+    "path": "C:\\Users\\aujla\\Desktop\\archive\\sample_outputs\\sample_04_16538.png"
+  },
+  {
+    "idx": 5,
+    "file": "18795.png",
+    "psnr_orig": 26.873,
+    "psnr_nm": 26.873,
+    "diff": 0.0,
+    "lat_orig": 1.95,
+    "lat_nm": 1.942,
+    "path": "C:\\Users\\aujla\\Desktop\\archive\\sample_outputs\\sample_05_18795.png"
+  },
+  {
+    "idx": 6,
+    "file": "21088.png",
+    "psnr_orig": 35.365,
+    "psnr_nm": 35.365,
+    "diff": 0.0,
+    "lat_orig": 2.32,
+    "lat_nm": 1.837,
+    "path": "C:\\Users\\aujla\\Desktop\\archive\\sample_outputs\\sample_06_21088.png"
+  },
+  {
+    "idx": 7,
+    "file": "23021.png",
+    "psnr_orig": 24.576,
+    "psnr_nm": 24.576,
+    "diff": 0.0,
+    "lat_orig": 2.087,
+    "lat_nm": 2.138,
+    "path": "C:\\Users\\aujla\\Desktop\\archive\\sample_outputs\\sample_07_23021.png"
+  },
+  {
+    "idx": 8,
+    "file": "3417.png",
+    "psnr_orig": 30.165,
+    "psnr_nm": 30.165,
+    "diff": 0.0,
+    "lat_orig": 1.901,
+    "lat_nm": 1.879,
+    "path": "C:\\Users\\aujla\\Desktop\\archive\\sample_outputs\\sample_08_3417.png"
+  },
+  {
+    "idx": 9,
+    "file": "5790.png",
+    "psnr_orig": 24.308,
+    "psnr_nm": 24.308,
+    "diff": -0.0,
+    "lat_orig": 1.965,
+    "lat_nm": 1.921,
+    "path": "C:\\Users\\aujla\\Desktop\\archive\\sample_outputs\\sample_09_5790.png"
+  },
+  {
+    "idx": 10,
+    "file": "7870.png",
+    "psnr_orig": 27.674,
+    "psnr_nm": 27.674,
+    "diff": 0.0,
+    "lat_orig": 2.176,
+    "lat_nm": 1.888,
+    "path": "C:\\Users\\aujla\\Desktop\\archive\\sample_outputs\\sample_10_7870.png"
+  }
+]

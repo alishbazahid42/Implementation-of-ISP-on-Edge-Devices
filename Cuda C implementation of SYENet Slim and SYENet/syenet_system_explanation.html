@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SYEISPNet — Complete System Explanation</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0D1117; color: #E6EDF3; font-size: 13px; line-height: 1.5; }
+
+/* ── HEADER ── */
+.header {
+  background: linear-gradient(135deg, #0D1F3C 0%, #1B3A6B 100%);
+  border-bottom: 3px solid #0D7377;
+  padding: 28px 40px 20px;
+}
+.header h1 { font-size: 26px; font-weight: 800; color: #58A6FF; letter-spacing: -0.5px; }
+.header .sub { font-size: 13px; color: #8B949E; margin-top: 6px; }
+.header .badge-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.badge { background: #161B22; border: 1px solid #30363D; border-radius: 20px; padding: 4px 12px; font-size: 11px; color: #8B949E; }
+.badge.green { border-color: #238636; color: #3FB950; }
+.badge.blue  { border-color: #1F6FEB; color: #58A6FF; }
+.badge.orange{ border-color: #F0883E; color: #F0883E; }
+
+/* ── LAYOUT ── */
+.layout { display: flex; min-height: calc(100vh - 120px); }
+
+/* ── SIDEBAR NAV ── */
+.nav {
+  width: 220px;
+  flex-shrink: 0;
+  background: #0D1117;
+  border-right: 1px solid #21262D;
+  padding: 20px 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.nav-section { padding: 6px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; color: #6E7681; margin-top: 10px; }
+.nav-item {
+  display: block; padding: 8px 20px; font-size: 12px; color: #8B949E;
+  cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s;
+  text-decoration: none;
+}
+.nav-item:hover { color: #E6EDF3; background: #161B22; }
+.nav-item.active { color: #58A6FF; border-left-color: #58A6FF; background: #1F3B4D22; font-weight: 600; }
+
+/* ── CONTENT ── */
+.content { flex: 1; padding: 32px 40px; max-width: 860px; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── TYPOGRAPHY ── */
+.page-title { font-size: 20px; font-weight: 800; color: #E6EDF3; margin-bottom: 6px; }
+.page-desc  { font-size: 13px; color: #8B949E; margin-bottom: 24px; line-height: 1.6; }
+.sec { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;
+  color: #F0883E; border-bottom: 1px solid #21262D; padding-bottom: 8px; margin: 24px 0 14px; }
+.sec:first-of-type { margin-top: 0; }
+
+/* ── CARDS ── */
+.card { background: #161B22; border: 1px solid #30363D; border-radius: 10px; padding: 16px 18px; margin-bottom: 12px; }
+.card.green  { border-left: 4px solid #238636; }
+.card.blue   { border-left: 4px solid #1F6FEB; }
+.card.orange { border-left: 4px solid #F0883E; }
+.card.red    { border-left: 4px solid #F85149; }
+.card.purple { border-left: 4px solid #8957E5; }
+.card.teal   { border-left: 4px solid #0D7377; }
+.card h3 { font-size: 13px; font-weight: 700; color: #E6EDF3; margin-bottom: 8px; }
+.card p, .card li { font-size: 12px; color: #8B949E; line-height: 1.7; }
+.card li { margin-left: 18px; margin-bottom: 3px; }
+.card strong { color: #E6EDF3; }
+.hl  { color: #3FB950; font-weight: 700; }
+.hl2 { color: #58A6FF; font-weight: 700; }
+.hl3 { color: #F0883E; font-weight: 700; }
+.hl4 { color: #F85149; font-weight: 700; }
+
+/* ── GRID ── */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+@media(max-width:700px){ .grid2,.grid3{ grid-template-columns:1fr; } }
+
+/* ── FLOW ── */
+.flow { display: flex; align-items: stretch; gap: 0; margin-bottom: 14px; flex-wrap: wrap; }
+.flow-box {
+  background: #161B22; border: 1px solid #30363D; border-radius: 8px;
+  padding: 10px 12px; flex: 1; min-width: 90px; text-align: center;
+}
+.flow-box .ft { font-size: 11px; font-weight: 700; color: #58A6FF; margin-bottom: 4px; }
+.flow-box .fs { font-size: 10px; color: #8B949E; line-height: 1.4; }
+.flow-box.g { border-color: #238636; } .flow-box.g .ft { color: #3FB950; }
+.flow-box.b { border-color: #1F6FEB; } .flow-box.b .ft { color: #58A6FF; }
+.flow-box.o { border-color: #F0883E; } .flow-box.o .ft { color: #F0883E; }
+.flow-box.p { border-color: #8957E5; } .flow-box.p .ft { color: #8957E5; }
+.flow-arrow { display: flex; align-items: center; padding: 0 6px; color: #6E7681; font-size: 18px; }
+
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 14px; }
+th { background: #161B22; color: #8B949E; font-weight: 600; padding: 8px 10px; text-align: left;
+  border-bottom: 2px solid #21262D; white-space: nowrap; }
+td { padding: 7px 10px; border-bottom: 1px solid #21262D; vertical-align: top; }
+tr:nth-child(even) td { background: #0D1117; }
+tr:nth-child(odd)  td { background: #161B22; }
+.good { color: #3FB950; font-weight: 700; }
+.warn { color: #F0883E; }
+.bad  { color: #F85149; }
+
+/* ── CODE ── */
+.code {
+  font-family: 'Courier New', monospace; font-size: 11px;
+  background: #0D1117; border: 1px solid #21262D; border-radius: 8px;
+  padding: 14px 16px; color: #3FB950; line-height: 1.7; margin: 10px 0;
+  overflow-x: auto; white-space: pre;
+}
+.code .c  { color: #6E7681; }
+.code .k  { color: #FF7B72; }
+.code .s  { color: #A5D6FF; }
+.code .fn { color: #D2A8FF; }
+
+/* ── NOTE ── */
+.note {
+  background: #0D2B1B; border: 1px solid #238636; border-radius: 8px;
+  padding: 12px 16px; font-size: 12px; color: #8B949E; line-height: 1.7; margin: 10px 0;
+}
+.note strong { color: #3FB950; }
+
+/* ── BRANCH VIZ ── */
+.branch-wrap { display: flex; gap: 10px; align-items: flex-start; margin: 12px 0; }
+.branch-io {
+  background: #1F3B4D; border: 1px solid #1F6FEB; border-radius: 8px;
+  padding: 12px 10px; text-align: center; font-size: 11px; color: #58A6FF;
+  font-weight: 700; min-width: 65px; align-self: center;
+}
+.branch-io.out { background: #0D3321; border-color: #238636; color: #3FB950; }
+.branches { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+.branch-row {
+  background: #161B22; border: 1px solid #30363D; border-radius: 5px;
+  padding: 6px 10px; font-size: 11px; display: flex; gap: 8px; align-items: center;
+}
+.branch-row.main { border-color: #1F6FEB; }
+.bname { color: #8B949E; font-weight: 700; min-width: 130px; font-family: monospace; font-size: 10px; }
+.bname.main { color: #58A6FF; }
+.bdesc { color: #E6EDF3; font-size: 11px; }
+.btag  { font-size: 9px; color: #6E7681; background: #0D1117; padding: 1px 6px; border-radius: 3px; }
+
+/* ── STAT BOXES ── */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+.stat { background: #161B22; border: 1px solid #30363D; border-radius: 10px; padding: 14px; text-align: center; }
+.stat-val { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+.stat-lbl { font-size: 10px; color: #8B949E; line-height: 1.4; }
+@media(max-width:600px){ .stats{ grid-template-columns:1fr 1fr; } }
+
+/* ── FPS BARS ── */
+.fps-row { margin-bottom: 10px; }
+.fps-lbl { display: flex; justify-content: space-between; font-size: 11px; color: #8B949E; margin-bottom: 4px; }
+.fps-bg  { background: #21262D; border-radius: 5px; height: 22px; overflow: hidden; }
+.fps-fill{ height: 100%; display: flex; align-items: center; padding-left: 10px; font-size: 11px; font-weight: 700; border-radius: 5px; }
+
+/* ── KERNEL CARDS ── */
+.kernel-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+.kcard { background: #161B22; border: 1px solid #30363D; border-radius: 8px; padding: 10px; }
+.knum  { font-size: 9px; color: #6E7681; font-weight: 700; text-transform: uppercase; }
+.kname { font-size: 12px; font-weight: 700; color: #58A6FF; margin: 4px 0; }
+.kdesc { font-size: 10px; color: #8B949E; line-height: 1.5; }
+.kcode { font-family: monospace; font-size: 9px; color: #3FB950; background: #0D1117;
+  padding: 4px 6px; border-radius: 4px; margin-top: 6px; line-height: 1.5; }
+@media(max-width:700px){ .kernel-grid{ grid-template-columns:1fr 1fr; } }
+
+/* ── MEMORY TIERS ── */
+.mem-tier { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 10px; }
+.mem-strip { height: 36px; border-radius: 5px; display: flex; align-items: center;
+  padding: 0 12px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.mem-info { font-size: 11px; color: #8B949E; line-height: 1.6; padding-top: 4px; }
+.mem-info strong { color: #E6EDF3; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #0D1117; }
+::-webkit-scrollbar-thumb { background: #30363D; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>SYEISPNet — Complete System Explanation</h1>
+  <div class="sub">From RAW sensor pixels → multi-branch training → reparameterization → CUDA C inference → 640+ FPS</div>
+  <div class="badge-row">
+    <div class="badge green">2,417 test images</div>
+    <div class="badge blue">NVIDIA Quadro T1000 · CUDA 13.3 · sm_75</div>
+    <div class="badge orange">SYEISPNet channels=12 rep_scale=4</div>
+    <div class="badge">5,640 slim params · 22.1 KB</div>
+    <div class="badge">9 CUDA kernels</div>
+    <div class="badge green">New Module: 24.85 dB PSNR · 0.8594 SSIM</div>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- ══════════════════════ SIDEBAR ══════════════════════ -->
+<nav class="nav">
+  <div class="nav-section">System</div>
+  <a class="nav-item active" onclick="show('overview')">① Overview</a>
+  <a class="nav-item" onclick="show('dataset')">② Dataset</a>
+
+  <div class="nav-section">Model</div>
+  <a class="nav-item" onclick="show('training')">③ Training Architecture</a>
+  <a class="nav-item" onclick="show('reparam')">④ Reparameterization</a>
+
+  <div class="nav-section">GPU Engine</div>
+  <a class="nav-item" onclick="show('cudac')">⑤ CUDA C Kernels</a>
+  <a class="nav-item" onclick="show('memory')">⑥ GPU Memory Hierarchy</a>
+  <a class="nav-item" onclick="show('why')">⑦ Why CUDA C Is 6× Faster</a>
+
+  <div class="nav-section">Results</div>
+  <a class="nav-item" onclick="show('results')">⑧ Benchmark Results</a>
+  <a class="nav-item" onclick="show('edge')">⑨ CPU vs GPU — Slim Logic</a>
+</nav>
+
+<!-- ══════════════════════ PAGES ══════════════════════ -->
+<div class="content">
+
+<!-- ════════ PAGE 1: OVERVIEW ════════ -->
+<div class="page active" id="p-overview">
+  <div class="page-title">System Overview</div>
+  <div class="page-desc">End-to-end pipeline: RAW camera sensor data → trained neural network → reparameterized slim model → custom CUDA C binary → 640 FPS RGB output.</div>
+
+  <div class="flow">
+    <div class="flow-box b"><div class="ft">DATASET</div><div class="fs">2,417 pairs<br>MediaTek RAW<br>+ Fujifilm GT</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box p"><div class="ft">TRAINING</div><div class="fs">SYEISPNet<br>110,984 params<br>10-branch QCU</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box g"><div class="ft">.slim()</div><div class="fs">Branch fusion<br>5,640 params<br>22.1 KB</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box o"><div class="ft">EXTRACT</div><div class="fs">weights.bin<br>flat binary<br>float32×5640</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box g"><div class="ft">CUDA C EXE</div><div class="fs">syenet_isp.exe<br>9 kernels<br>__constant__</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box g"><div class="ft">OUTPUT</div><div class="fs">RGB PNG<br>256×256<br>640+ FPS</div></div>
+  </div>
+
+  <div class="sec">What is SYEISPNet?</div>
+  <div class="grid2">
+    <div class="card blue">
+      <h3>Image Signal Processor (ISP) Network</h3>
+      <p>Replaces the traditional camera ISP pipeline in software. Takes a <strong>4-channel 16-bit RAW</strong> sensor image (RGGB Bayer mosaic) and converts it to a <strong>3-channel sRGB image</strong>, trained to match Fujifilm color science.</p>
+      <br>
+      <p>Two variants exist: <span class="hl3">SYEISPNet</span> (training, 110K params, multi-branch) and <span class="hl">SYEISPNetS</span> (slim, 5,640 params, single conv per block — used at runtime).</p>
+    </div>
+    <div class="card green">
+      <h3>Why Two Variants?</h3>
+      <p>Multi-branch training gives the optimizer more gradient paths → finds better weights → higher PSNR. But at inference, only one equivalent conv is needed — the branches exist purely for training.</p>
+      <br>
+      <p><strong>Reparameterization</strong> mathematically fuses all 10 branches into one. Output is <span class="hl">bit-identical</span> (PSNR = 134 dB between multi-branch and slim). Zero quality loss, 20× fewer parameters.</p>
+    </div>
+  </div>
+
+  <div class="sec">Two Models in This Project</div>
+  <table>
+    <tr><th>Property</th><th>Original Model</th><th>New Module</th><th>After .slim() (both)</th></tr>
+    <tr><td><b>Training params</b></td><td>110,984</td><td>110,984</td><td class="good">5,640</td></tr>
+    <tr><td><b>Architecture</b></td><td>SYEISPNet ch=12 rep=4</td><td>SYEISPNet ch=12 rep=4</td><td>SYEISPNetS (identical)</td></tr>
+    <tr><td><b>Branches per block</b></td><td>10 (5 types × plain+BN)</td><td>10 (5 types × plain+BN)</td><td>1 fused conv</td></tr>
+    <tr><td><b>Weight file</b></td><td>weights.bin 22.1 KB</td><td>weights_nm.bin 22.1 KB</td><td>Same 5640-float format</td></tr>
+    <tr><td><b>CUDA exe</b></td><td>syenet_isp.exe</td><td class="good">syenet_isp.exe (same!)</td><td>No recompile needed</td></tr>
+    <tr><td><b>PSNR (2,417 imgs)</b></td><td>19.17 dB</td><td class="good">24.85 dB (+5.7 dB)</td><td>—</td></tr>
+    <tr><td><b>SSIM (2,417 imgs)</b></td><td>0.6458</td><td class="good">0.8594 (+0.21)</td><td>—</td></tr>
+    <tr><td><b>GPU FPS (100-iter)</b></td><td>641 FPS</td><td>646 FPS</td><td>Identical compute</td></tr>
+  </table>
+  <div class="note"><strong>Key takeaway:</strong> Both models share the same CUDA C exe, same 9 kernels, same __constant__ memory layout. Only the 5,640 float values differ. The New Module's superior quality comes entirely from better training, not a different inference architecture.</div>
+</div>
+
+<!-- ════════ PAGE 2: DATASET ════════ -->
+<div class="page" id="p-dataset">
+  <div class="page-title">Dataset</div>
+  <div class="page-desc">2,417 paired images captured simultaneously: MediaTek smartphone RAW sensor as input, Fujifilm camera as the "ideal ISP" reference output.</div>
+
+  <div class="grid2">
+    <div class="card blue">
+      <h3>Input: MediaTek RAW  (mediatek_raw/)</h3>
+      <ul>
+        <li><strong>Format:</strong> 16-bit grayscale PNG, Bayer RGGB mosaic</li>
+        <li><strong>Size:</strong> 256×256 pixels (1 channel raw)</li>
+        <li><strong>Bit depth:</strong> 0–4095 (12-bit sensor in 16-bit container)</li>
+        <li><strong>After de-Bayer:</strong> 4×128×128 float32 (R, G1, G2, B channels)</li>
+        <li><strong>Normalization:</strong> ÷ 4095 → range [0, 1]</li>
+      </ul>
+    </div>
+    <div class="card orange">
+      <h3>Ground Truth: Fujifilm RGB  (fujifilm/)</h3>
+      <ul>
+        <li><strong>Format:</strong> 8-bit RGB PNG</li>
+        <li><strong>Size:</strong> 256×256 pixels, 3 channels</li>
+        <li><strong>Bit depth:</strong> 0–255 per channel</li>
+        <li><strong>Normalization:</strong> ÷ 255 → range [0, 1]</li>
+        <li><strong>Purpose:</strong> Fujifilm color science = the learning target</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sec">De-Bayer: How a 256×256 RAW Becomes 4×128×128</div>
+  <p style="color:#8B949E; margin-bottom:10px;">A camera sensor captures one color per pixel (the Bayer pattern). Each 2×2 block has R, G, G, B. We extract each color into its own channel:</p>
+  <div class="code"><span class="c"># Bayer pattern (each cell = 1 pixel on the sensor):</span>
+R  G1  R  G1  R  G1  ...     <- rows 0, 2, 4 ...
+G2 B   G2 B   G2 B   ...     <- rows 1, 3, 5 ...
+
+<span class="c"># De-Bayer: split 256×256 into 4 channels of 128×128</span>
+raw = np.array(Image.open(png_path))               <span class="c"># (256, 256) uint16</span>
+h, w = raw.shape                                    <span class="c"># 256, 256</span>
+rggb = raw.reshape(h//2, 2, w//2, 2)               <span class="c"># (128, 2, 128, 2)</span>
+rggb = rggb.transpose([1, 3, 0, 2])                <span class="c"># (2, 2, 128, 128)</span>
+rggb = rggb.reshape([-1, h//2, w//2])              <span class="c"># (4, 128, 128) ← R, G1, G2, B</span>
+rggb = rggb.astype(np.float32) / 4095.0            <span class="c"># normalize to [0, 1]</span>
+rggb.tofile("input.bin")                           <span class="c"># 4×128×128×4 bytes = 262,144 bytes</span></div>
+
+  <div class="sec">Quality Metrics</div>
+  <table>
+    <tr><th>Metric</th><th>Formula</th><th>What it measures</th><th>Good value</th></tr>
+    <tr><td><b>PSNR</b></td><td>10·log₁₀(MAX²/MSE)</td><td>Pixel accuracy vs Fujifilm GT (dB, higher=better)</td><td>&gt;30 dB excellent</td></tr>
+    <tr><td><b>SSIM</b></td><td>luminance × contrast × structure</td><td>Perceptual similarity — matches human perception better than PSNR</td><td>0→1, &gt;0.9 excellent</td></tr>
+    <tr><td><b>Verification PSNR</b></td><td>same formula</td><td>CUDA C output vs PyTorch slim reference (not vs GT)</td><td>&gt;60 dB = identical</td></tr>
+    <tr><td><b>GPU Latency</b></td><td>cudaEventRecord</td><td>Pure GPU compute time, no PCIe, measured on-device</td><td>&lt;5 ms for real-time</td></tr>
+    <tr><td><b>FPS</b></td><td>1000 / latency_ms</td><td>Throughput</td><td>&gt;30 FPS real-time</td></tr>
+  </table>
+  <div class="note"><strong>PSNR vs Fujifilm GT</strong> (19–25 dB) ≠ <strong>Verification PSNR</strong> (134 dB). The first measures image quality. The second checks that CUDA C and PyTorch slim produce mathematically identical outputs — 134 dB means they agree within floating-point rounding error.</div>
+</div>
+
+<!-- ════════ PAGE 3: TRAINING ════════ -->
+<div class="page" id="p-training">
+  <div class="page-title">Training Architecture</div>
+  <div class="page-desc">SYEISPNet uses a QuadraticConnectionUnit (QCU) block with 10 parallel branches per conv layer — giving the optimizer more gradient paths to find better weights.</div>
+
+  <div class="sec">Network Stages</div>
+  <div class="flow">
+    <div class="flow-box b"><div class="ft">INPUT</div><div class="fs">4×128×128<br>RGGB float32</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box p"><div class="ft">HEAD (QCU)</div><div class="fs">4→12ch<br>128×128<br>5×5 + 3×3 conv</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box o"><div class="ft">BODY (QCU)</div><div class="fs">12→12ch<br>128×128<br>3×3 + 1×1 conv</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box g"><div class="ft">ATT (SE)</div><div class="fs">12-ch attention<br>GAP → FC → sigmoid<br>channel scaling</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="border-color:#F85149;"><div class="ft" style="color:#F85149;">TAIL</div><div class="fs">PixelShuffle ×2<br>12→3ch<br>256×256</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box g"><div class="ft">OUTPUT</div><div class="fs">3×256×256<br>sRGB float32<br>clamp [0,1]</div></div>
+  </div>
+
+  <div class="sec">QuadraticConnectionUnit (QCU) — Core Block</div>
+  <div class="card purple">
+    <h3>Quadratic activation: out = block1(x) × block2(x) + bias</h3>
+    <p>Each QCU contains two ConvRep branches. Their outputs are combined by <strong>element-wise multiplication</strong>, not addition. This is the "quadratic" part — the network can model interactions between features that a purely linear (additive) block cannot. The bias added after the multiply is a learned per-channel offset.</p>
+  </div>
+
+  <div class="sec">ConvRep Block — 10 Parallel Branches During Training</div>
+  <div class="branch-wrap">
+    <div class="branch-io">Input<br>4ch or<br>12ch</div>
+    <div class="flow-arrow">→</div>
+    <div class="branches">
+      <div style="font-size:10px; color:#8B949E; font-weight:700; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">10 parallel branches (all run simultaneously in training):</div>
+      <div class="branch-row main"><span class="bname main">conv 5×5 or 3×3</span><span class="bdesc">Main spatial branch — captures local texture</span><span class="btag">plain</span></div>
+      <div class="branch-row"><span class="bname">conv_bn</span><span class="bdesc">Same conv + BatchNorm variant</span><span class="btag">+ BN</span></div>
+      <div class="branch-row main"><span class="bname main">conv1 1×1</span><span class="bdesc">Pointwise — channel mixing, no spatial</span><span class="btag">plain</span></div>
+      <div class="branch-row"><span class="bname">conv1_bn</span><span class="bdesc">Pointwise + BatchNorm</span><span class="btag">+ BN</span></div>
+      <div class="branch-row main"><span class="bname main">conv2 3×3</span><span class="bdesc">Secondary spatial branch</span><span class="btag">plain</span></div>
+      <div class="branch-row"><span class="bname">conv2_bn</span><span class="bdesc">Secondary spatial + BatchNorm</span><span class="btag">+ BN</span></div>
+      <div class="branch-row main"><span class="bname main">conv_crossh 3×1</span><span class="bdesc">Horizontal edge detector</span><span class="btag">plain</span></div>
+      <div class="branch-row"><span class="bname">conv_crossh_bn</span><span class="bdesc">Horizontal + BatchNorm</span><span class="btag">+ BN</span></div>
+      <div class="branch-row main"><span class="bname main">conv_crossv 1×3</span><span class="bdesc">Vertical edge detector</span><span class="btag">plain</span></div>
+      <div class="branch-row"><span class="bname">conv_crossv_bn</span><span class="bdesc">Vertical + BatchNorm</span><span class="btag">+ BN</span></div>
+      <div style="font-size:10px; color:#8B949E; margin-top:6px;">↓ All 10 feature maps stacked → conv_out (1×1) fuses to C_out channels</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="branch-io out">conv_out<br>1×1<br>fuse all<br>10 branches</div>
+  </div>
+
+  <div class="sec">Why 10 Branches Help Training</div>
+  <div class="grid2">
+    <div class="card purple">
+      <h3>More gradient paths → better optimization</h3>
+      <p>During backprop, each branch gets its own gradient signal. The 5×5 branch learns large context, 1×1 learns channel mixing, 3×1 and 1×3 learn directional edges, 3×3 learns mid-range patterns. All 10 push the model toward different minima simultaneously — the optimizer finds a better solution than any single branch alone. This is why New Module achieves <span class="hl">+5.7 dB PSNR</span>.</p>
+    </div>
+    <div class="card green">
+      <h3>BatchNorm variants for regularization</h3>
+      <p>Each plain branch has a BN twin. BatchNorm normalizes layer outputs during training → stabilizes learning, reduces internal covariate shift, and acts as a regularizer. At inference, BN is absorbed into the conv weights (γ, β, running_mean, running_var → adjust W and b). Zero inference overhead — but helps training significantly.</p>
+    </div>
+  </div>
+
+  <div class="sec">Squeeze-and-Excitation Attention (ATT Block)</div>
+  <div class="card teal">
+    <h3>Learns which color channels matter most — per image</h3>
+    <p><strong>Step 1 — Squeeze (GAP):</strong> Global Average Pool collapses each of the 12 channels to a single scalar → output shape (12,). Summarizes "how active is this channel overall?"</p><br>
+    <p><strong>Step 2 — Excite (FC → PReLU → FC → Sigmoid):</strong> Two 1×1 convolutions with nonlinearity process the 12 scalars → output 12 attention weights in [0, 1].</p><br>
+    <p><strong>Step 3 — Scale:</strong> Each channel's entire feature map is multiplied by its attention scalar. Channels encoding useful color info (e.g. green edges) get values near 1; noisy channels get suppressed toward 0.</p>
+  </div>
+
+  <div class="sec">TAIL — Sub-pixel Upsampling (PixelShuffle ×2)</div>
+  <div class="card red">
+    <h3>(12, 128, 128) → (3, 256, 256) without interpolation</h3>
+    <p>PixelShuffle rearranges channels into spatial dimensions: <strong>(C×r², H, W) → (C, r×H, r×W)</strong> where r=2. Takes 12 channels at 128×128 → rearranges into 3 channels at 256×256. Each 2×2 block in the output comes from 4 channels at the same spatial position in the input — <span class="hl">no blurring, no interpolation artifacts</span>. A final 3×3 conv refines the output, then clamp01 ensures valid [0,1] RGB.</p>
+  </div>
+</div>
+
+<!-- ════════ PAGE 4: REPARAMETERIZATION ════════ -->
+<div class="page" id="p-reparam">
+  <div class="page-title">Reparameterization — The Key Insight</div>
+  <div class="page-desc">Mathematical fusion of 10 training branches into 1 inference conv. Zero quality loss. 20× fewer parameters. This is what makes the CUDA C engine possible.</div>
+
+  <div class="sec">The Core Math</div>
+  <div class="card green">
+    <h3>Any sum of linear operations on the same input = one linear operation</h3>
+    <p>All branches receive the same input <strong>X</strong>. Each branch applies a convolution (linear operation). Their outputs are stacked and projected by conv_out (another linear operation):</p>
+  </div>
+  <div class="code"><span class="c"># What happens during forward pass (10 branches):</span>
+out = conv_out.weight @ stack([conv1(X), conv2(X), ..., conv10(X)])
+
+<span class="c"># Since conv is linear:</span>
+conv_out[:, i] @ conv_i(X)  ==  (conv_out[:, i] ⊛ conv_i.weight)(X)
+
+<span class="c"># Therefore: sum over all branches = one fused conv:</span>
+W_fused = sum_i(conv_out.weight[:, i, :, :] ⊛ conv_i.weight)
+b_fused = sum_i(conv_out.bias[i] * conv_i.bias + ...)
+
+<span class="c"># Fused conv produces IDENTICAL output to all 10 branches:</span>
+out = F.conv2d(X, W_fused, b_fused)  <span class="c"># PSNR vs 10-branch = 134 dB (bit-identical)</span></div>
+
+  <div class="sec">BatchNorm Absorption</div>
+  <div class="code"><span class="c"># BN formula at inference: y = γ·(x − μ)/√(σ²+ε) + β</span>
+<span class="c"># This is linear in x → absorb into conv:</span>
+scale = gamma / sqrt(running_var + eps)
+W_fused = conv.weight * scale.reshape(-1, 1, 1, 1)  <span class="c"># scale each output channel's filter</span>
+b_fused = (conv.bias - running_mean) * scale + beta  <span class="c"># shift the bias</span>
+<span class="c"># Result: W_fused, b_fused replace both conv AND BN with zero extra cost at runtime</span></div>
+
+  <div class="sec">Kernel Padding for Branch Fusion</div>
+  <p style="color:#8B949E; margin-bottom:10px;">Branches have different kernel sizes (5×5, 3×3, 3×1, 1×3, 1×1). To sum them, smaller kernels are zero-padded to match the largest:</p>
+  <table>
+    <tr><th>Branch</th><th>Native kernel</th><th>Padded to</th><th>Padding</th></tr>
+    <tr><td>conv (main)</td><td>5×5</td><td>5×5</td><td>None</td></tr>
+    <tr><td>conv1</td><td>1×1</td><td>5×5</td><td>+2 each side</td></tr>
+    <tr><td>conv2</td><td>3×3</td><td>5×5 or 3×3</td><td>+1 each side</td></tr>
+    <tr><td>conv_crossh</td><td>3×1</td><td>3×3</td><td>+1 vertically</td></tr>
+    <tr><td>conv_crossv</td><td>1×3</td><td>3×3</td><td>+1 horizontally</td></tr>
+  </table>
+
+  <div class="sec">Result: SYEISPNetS Slim State Dict (5,640 floats)</div>
+  <table>
+    <tr><th>Key</th><th>Shape</th><th>Params</th><th>Source</th></tr>
+    <tr><td>head.block1.0.weight</td><td>(12, 4, 5, 5)</td><td class="warn">1,200</td><td>10-branch HEAD first conv, 5×5 fused</td></tr>
+    <tr><td>head.block1.0.bias</td><td>(12,)</td><td>12</td><td>fused bias</td></tr>
+    <tr><td>head.block1.1.weight</td><td>(12,)</td><td>12</td><td>PReLU alpha (per channel)</td></tr>
+    <tr><td>head.block1.2.weight</td><td>(12, 12, 3, 3)</td><td class="warn">1,296</td><td>10-branch HEAD second conv, 3×3 fused</td></tr>
+    <tr><td>head.block1.2.bias</td><td>(12,)</td><td>12</td><td>fused bias</td></tr>
+    <tr><td>head.block2.weight</td><td>(12, 4, 5, 5)</td><td class="warn">1,200</td><td>10-branch HEAD block2, 5×5 fused</td></tr>
+    <tr><td>head.block2.bias + head.bias</td><td>(12,)×2</td><td>24</td><td>fused branch bias + QCU output bias</td></tr>
+    <tr><td>body.block1.weight</td><td>(12, 12, 3, 3)</td><td class="warn">1,296</td><td>10-branch BODY first conv, 3×3 fused</td></tr>
+    <tr><td>body.block1.bias</td><td>(12,)</td><td>12</td><td>fused bias</td></tr>
+    <tr><td>body.block2.weight</td><td>(12, 12, 1, 1)</td><td>144</td><td>2-branch BODY second conv, 1×1 fused</td></tr>
+    <tr><td>body.block2.bias + body.bias</td><td>(12,)×2</td><td>24</td><td>fused biases</td></tr>
+    <tr><td>att.1.weight + att.1.bias</td><td>(12,12,1,1)+(12,)</td><td>156</td><td>SE FC1 (2-branch fused)</td></tr>
+    <tr><td>att.2.weight</td><td>(12,)</td><td>12</td><td>PReLU alpha</td></tr>
+    <tr><td>att.3.weight + att.3.bias</td><td>(12,12,1,1)+(12,)</td><td>156</td><td>SE FC2 (2-branch fused)</td></tr>
+    <tr><td>tail.1.weight + tail.1.bias</td><td>(3,3,3,3)+(3,)</td><td>84</td><td>TAIL conv3×3 (5-branch fused)</td></tr>
+    <tr style="background:#0D3321;"><td colspan="2"><strong style="color:#3FB950;">TOTAL</strong></td><td class="good" style="font-size:14px;"><strong>5,640</strong></td><td class="good">from 110,984 training params (20× reduction)</td></tr>
+  </table>
+
+  <div class="code"><span class="c"># One-line reparameterization in Python</span>
+net  = SYEISPNet(channels=12, rep_scale=4).eval()
+net.load_state_dict(torch.load(<span class="s">"model_best.pkl"</span>))
+slim = net.slim().eval()  <span class="c"># ← all fusion logic happens here</span>
+
+<span class="c"># Export to binary for CUDA C</span>
+<span class="k">with</span> open(<span class="s">"weights_nm.bin"</span>, <span class="s">"wb"</span>) <span class="k">as</span> f:
+    <span class="k">for</span> key, shape <span class="k">in</span> weight_order:
+        slim.state_dict()[key].numpy().astype(np.float32).tofile(f)
+<span class="c"># total: 5640 floats = 22,560 bytes = 22.1 KB</span></div>
+</div>
+
+<!-- ════════ PAGE 5: CUDA C ════════ -->
+<div class="page" id="p-cudac">
+  <div class="page-title">CUDA C Engine — syenet_isp.exe</div>
+  <div class="page-desc">A standalone CUDA binary. No Python, no PyTorch, no cuDNN. Loads 22.1 KB weights into on-chip constant memory, then runs 9 custom kernels per image.</div>
+
+  <div class="sec">Startup Sequence (runs once)</div>
+  <div class="code"><span class="c">// 1. Load weights from .bin file into CPU memory</span>
+FILE *fp = fopen(argv[1], "rb");
+fread(weights_cpu, <span class="k">sizeof</span>(<span class="k">float</span>), 5640, fp);
+
+<span class="c">// 2. Copy to GPU constant memory (64KB on-chip cache)</span>
+<span class="k">__constant__</span> <span class="k">float</span> c_w[5640];
+cudaMemcpyToSymbol(c_w, weights_cpu, 5640 * <span class="k">sizeof</span>(<span class="k">float</span>));
+<span class="c">// Now ALL 9 kernels can read any weight in ~1 GPU clock cycle</span>
+
+<span class="c">// 3. Pre-allocate GPU buffers ONCE (reused for all images)</span>
+cudaMalloc(&d_input, 4*128*128 * <span class="k">sizeof</span>(<span class="k">float</span>));   <span class="c">// 256 KB — RAW input</span>
+cudaMalloc(&d_head,  12*128*128 * <span class="k">sizeof</span>(<span class="k">float</span>));  <span class="c">// 768 KB — HEAD output</span>
+cudaMalloc(&d_body,  12*128*128 * <span class="k">sizeof</span>(<span class="k">float</span>));  <span class="c">// 768 KB — BODY output</span>
+cudaMalloc(&d_att,   12 * <span class="k">sizeof</span>(<span class="k">float</span>));           <span class="c">//  48 B  — SE scalars</span>
+cudaMalloc(&d_tail,  12*128*128 * <span class="k">sizeof</span>(<span class="k">float</span>));  <span class="c">// 768 KB — TAIL input</span>
+cudaMalloc(&d_out,   3*256*256 * <span class="k">sizeof</span>(<span class="k">float</span>));   <span class="c">// 768 KB — RGB output</span></div>
+
+  <div class="sec">Per-Image Forward Pass</div>
+  <div class="code"><span class="c">// Timer: device-side, no PCIe round-trip</span>
+cudaEvent_t t0, t1;
+cudaEventRecord(t0, 0);
+
+<span class="c">// ── HEAD ──────────────────────────────────────</span>
+conv2d&lt;&lt;&lt;grid,block&gt;&gt;&gt;(d_input, d_head, c_w + W_HEAD1, ...);  <span class="c">// 5×5, 4→12ch</span>
+prelu&lt;&lt;&lt;...&gt;&gt;&gt;(d_head, c_w + W_PRELU1, 12*128*128);
+conv2d&lt;&lt;&lt;grid,block&gt;&gt;&gt;(d_head, d_head, c_w + W_HEAD2, ...);   <span class="c">// 3×3, 12→12ch</span>
+prelu&lt;&lt;&lt;...&gt;&gt;&gt;(d_head, c_w + W_PRELU2, 12*128*128);
+
+conv2d&lt;&lt;&lt;grid,block&gt;&gt;&gt;(d_input, d_branch2, c_w + W_HEAD_B2, ...);  <span class="c">// block2</span>
+mul_bias&lt;&lt;&lt;...&gt;&gt;&gt;(d_head, d_branch2, d_head, c_w + W_BIAS_H, ...);  <span class="c">// QCU: ×+bias</span>
+
+<span class="c">// ── BODY ──────────────────────────────────────</span>
+conv2d&lt;&lt;&lt;grid,block&gt;&gt;&gt;(d_head, d_body, c_w + W_BODY1, ...);   <span class="c">// 3×3, 12→12ch</span>
+prelu&lt;&lt;&lt;...&gt;&gt;&gt;(d_body, c_w + W_PRELU3, 12*128*128);
+conv2d&lt;&lt;&lt;grid,block&gt;&gt;&gt;(d_head, d_body2, c_w + W_BODY2, ...);  <span class="c">// 1×1, branch2</span>
+mul_bias&lt;&lt;&lt;...&gt;&gt;&gt;(d_body, d_body2, d_body, c_w + W_BIAS_B, ...);
+
+<span class="c">// ── ATTENTION ─────────────────────────────────</span>
+gap&lt;&lt;&lt;1, 12&gt;&gt;&gt;(d_body, d_att, 128*128);                    <span class="c">// Global Average Pool</span>
+fc1x1&lt;&lt;&lt;1, 12&gt;&gt;&gt;(d_att, d_att2, c_w + W_FC1, 12, 12);    <span class="c">// FC layer</span>
+prelu&lt;&lt;&lt;...&gt;&gt;&gt;(d_att2, c_w + W_PRELU4, 12);
+fc1x1&lt;&lt;&lt;1, 12&gt;&gt;&gt;(d_att2, d_att, c_w + W_FC2, 12, 12);
+sigmoid_ip&lt;&lt;&lt;...&gt;&gt;&gt;(d_att, 12);                           <span class="c">// → attention in [0,1]</span>
+channel_scale&lt;&lt;&lt;...&gt;&gt;&gt;(d_body, d_att, 12*128*128, 128*128); <span class="c">// scale channels</span>
+
+<span class="c">// ── TAIL ──────────────────────────────────────</span>
+pixel_shuffle&lt;&lt;&lt;grid,block&gt;&gt;&gt;(d_body, d_tail, 128, 128, 12, 3, 2);  <span class="c">// ×2 upsample</span>
+conv2d&lt;&lt;&lt;grid,block&gt;&gt;&gt;(d_tail, d_out, c_w + W_TAIL, ...);           <span class="c">// 3×3 refine</span>
+clamp01&lt;&lt;&lt;...&gt;&gt;&gt;(d_out, 3*256*256);                                  <span class="c">// → [0,1]</span>
+
+cudaEventRecord(t1, 0);
+cudaEventSynchronize(t1);
+cudaEventElapsedTime(&ms, t0, t1);   <span class="c">// pure GPU time, microsecond precision</span></div>
+
+  <div class="sec">All 9 Kernels Explained</div>
+  <div class="kernel-grid">
+    <div class="kcard">
+      <div class="knum">Kernel 1</div>
+      <div class="kname">conv2d</div>
+      <div class="kdesc">One thread per output pixel. Each thread loops over all input channels and kernel elements (e.g. 4×5×5=100 multiplies for HEAD). Reads weights directly from __constant__ c_w[].</div>
+      <div class="kcode">grid = (W_out, H_out, C_out)<br>block = (16, 16, 1)</div>
+    </div>
+    <div class="kcard">
+      <div class="knum">Kernel 2</div>
+      <div class="kname">prelu</div>
+      <div class="kdesc">Parametric ReLU — learnable negative slope per channel. In-place. x = (x ≥ 0) ? x : alpha[channel] × x. Alpha comes from c_w[].</div>
+      <div class="kcode">ceil(N/256) blocks<br>256 threads each</div>
+    </div>
+    <div class="kcard">
+      <div class="knum">Kernel 3</div>
+      <div class="kname">mul_bias</div>
+      <div class="kdesc">QCU fusion: multiplies two branch feature maps element-wise, then adds per-channel bias. Fuses 3 operations (multiply, broadcast bias, add) into one kernel launch.</div>
+      <div class="kcode">out = b1 × b2 + bias[c]<br>ceil(N/256) blocks</div>
+    </div>
+    <div class="kcard">
+      <div class="knum">Kernel 4</div>
+      <div class="kname">gap (Global Avg Pool)</div>
+      <div class="kdesc">Collapses 12×128×128 feature map to 12 scalars for the SE attention block. Each thread handles one channel, using atomicAdd to accumulate 128×128 = 16,384 pixel values.</div>
+      <div class="kcode">1 block, 12 threads<br>atomicAdd per channel</div>
+    </div>
+    <div class="kcard">
+      <div class="knum">Kernel 5</div>
+      <div class="kname">fc1×1 (Fully Connected)</div>
+      <div class="kdesc">Implements the SE attention FC layers as 1×1 convolutions. Each output thread computes a dot product: out[j] = Σᵢ(in[i] × W[j×Cin+i]) + bias[j].</div>
+      <div class="kcode">1 block, C_out threads<br>dot product per output</div>
+    </div>
+    <div class="kcard">
+      <div class="knum">Kernel 6</div>
+      <div class="kname">sigmoid_ip</div>
+      <div class="kdesc">In-place sigmoid: x = 1/(1+exp(−x)). Converts SE FC2 raw outputs to attention weights in [0,1]. Uses CUDA's fast __expf() intrinsic.</div>
+      <div class="kcode">x = 1/(1+__expf(-x))<br>ceil(N/256) blocks</div>
+    </div>
+    <div class="kcard">
+      <div class="knum">Kernel 7</div>
+      <div class="kname">channel_scale</div>
+      <div class="kdesc">Applies SE attention: multiplies every pixel in channel c by att[c]. Useful channels (green, edges) get values near 1; noisy channels get suppressed toward 0.</div>
+      <div class="kcode">data[c·HW+s] *= att[c]<br>ceil(N/256) blocks</div>
+    </div>
+    <div class="kcard">
+      <div class="knum">Kernel 8</div>
+      <div class="kname">pixel_shuffle</div>
+      <div class="kdesc">Sub-pixel upsample ×2: rearranges (12,128,128) tensor into (3,256,256) by moving channel dimensions into spatial positions. No interpolation, no blur.</div>
+      <div class="kcode">grid=(Wout,Hout,Cout)<br>block=(16,16,1)</div>
+    </div>
+    <div class="kcard">
+      <div class="knum">Kernel 9</div>
+      <div class="kname">clamp01</div>
+      <div class="kdesc">Clamps all output RGB values to valid range [0,1] before writing to output buffer. Handles overflow from the final 3×3 tail conv.</div>
+      <div class="kcode">x = max(0, min(1, x))<br>ceil(N/256) blocks</div>
+    </div>
+  </div>
+
+  <div class="sec">CLI Interface &amp; Benchmark Mode</div>
+  <div class="code">syenet_isp.exe  &lt;weights.bin&gt;  &lt;input.bin&gt;  &lt;output.bin&gt;  [N_ITER]
+
+<span class="c"># N_ITER = 100 (default): runs 5 warmup + 100 timed iterations → prints full perf box</span>
+╔══════════════════════════════╗
+║  SYENet ISP — GPU Benchmark  ║
+║  Avg latency : 1.547 ms      ║
+║  Throughput  : 646.3 FPS     ║
+║  PSNR vs ref : 134.93 dB     ║
+╚══════════════════════════════╝
+
+<span class="c"># N_ITER = 1: single pass, no warmup → minimal output for batch benchmarking</span>
+LATENCY_MS=1.5470
+
+<span class="c"># Used by run_nm_benchmark.py to process all 2,417 images:</span>
+subprocess.run([EXE, WEIGHTS, input_bin, output_bin, <span class="s">"1"</span>])
+lat_ms = float(stdout.split(<span class="s">"LATENCY_MS="</span>)[1])</div>
+</div>
+
+<!-- ════════ PAGE 6: MEMORY ════════ -->
+<div class="page" id="p-memory">
+  <div class="page-title">GPU Memory Hierarchy</div>
+  <div class="page-desc">Understanding why the 22.1 KB weights fit in __constant__ memory — and why that single decision drives most of the 6× speedup over PyTorch.</div>
+
+  <div class="sec">Memory Tiers — Speed vs Capacity</div>
+  <div class="mem-tier">
+    <div class="mem-strip" style="background:#0D4A1E; color:#3FB950; min-width:200px;">__constant__ cache (on-chip)</div>
+    <div class="mem-info"><strong style="color:#3FB950;">64 KB per GPU · ~1 clock cycle · broadcast to all threads in a warp</strong><br>Dedicated read-only cache. When all threads in a warp read the same weight (e.g. a kernel coefficient), the hardware broadcasts it in a single cycle — no per-thread fetch. SYENet weights = 22.1 KB → fits entirely. Every conv kernel reads all its weights from here.</div>
+  </div>
+  <div class="mem-tier">
+    <div class="mem-strip" style="background:#3B2800; color:#F0883E; min-width:200px;">L1 / Shared Memory (on-chip)</div>
+    <div class="mem-info"><strong style="color:#F0883E;">32–48 KB per SM · ~4 cycles · per thread block only</strong><br>The conv2d kernel uses shared memory to cache the input tile being processed by a 16×16 thread block. Instead of each of the 256 threads reading the same input pixel from global memory 9 times (for a 3×3 kernel), the tile is loaded once into shared memory and read 9 times locally.</div>
+  </div>
+  <div class="mem-tier">
+    <div class="mem-strip" style="background:#1A2A3A; color:#58A6FF; min-width:200px;">L2 Cache (on-chip)</div>
+    <div class="mem-info"><strong style="color:#58A6FF;">4 MB on Quadro T1000 · ~20–30 cycles · GPU-wide</strong><br>Activation tensors that pass between kernels (e.g. d_head written by conv2d, then read by prelu) often stay in L2. Kernels that run back-to-back on the same buffer benefit from L2 reuse without explicit synchronization.</div>
+  </div>
+  <div class="mem-tier">
+    <div class="mem-strip" style="background:#2D0A00; color:#F85149; min-width:200px;">VRAM — GDDR6 (off-chip)</div>
+    <div class="mem-info"><strong style="color:#F85149;">4 GB total · ~300–500 cycles · all SMs share bandwidth</strong><br>Where d_input, d_head, d_body, d_out live. Each kernel reads its input activations and writes output here. This is the main bandwidth bottleneck — the reason adding more branches doesn't proportionally slow down the GPU (memory bandwidth, not FLOP count, is the limit).</div>
+  </div>
+  <div class="mem-tier">
+    <div class="mem-strip" style="background:#1A1A2E; color:#6E7681; min-width:200px;">PCIe x16 (host↔device)</div>
+    <div class="mem-info"><strong style="color:#6E7681;">~16 GB/s · thousands of cycles · CPU ↔ GPU transfer</strong><br>Only used twice per image: upload input.bin (256 KB) and download output.bin (768 KB). The cudaEventRecord timer starts AFTER the upload and ends BEFORE the download — latency measurement is pure GPU compute only.</div>
+  </div>
+
+  <div class="sec">All GPU Buffers</div>
+  <table>
+    <tr><th>Buffer</th><th>Shape</th><th>Size</th><th>Location</th><th>Purpose</th></tr>
+    <tr><td><b>c_w[5640]</b></td><td>5,640 floats</td><td class="good">22.1 KB</td><td class="good">__constant__ (on-chip)</td><td>All slim weights — permanent, all images</td></tr>
+    <tr><td><b>d_input</b></td><td>4 × 128 × 128</td><td>256 KB</td><td>VRAM global</td><td>RGGB input (refreshed each image)</td></tr>
+    <tr><td><b>d_head</b></td><td>12 × 128 × 128</td><td>768 KB</td><td>VRAM global</td><td>HEAD QCU output (reused as intermediate)</td></tr>
+    <tr><td><b>d_body</b></td><td>12 × 128 × 128</td><td>768 KB</td><td>VRAM global</td><td>BODY QCU output + SE attention input</td></tr>
+    <tr><td><b>d_att</b></td><td>12 scalars</td><td>&lt; 1 KB</td><td>VRAM global</td><td>SE attention weights (12 floats)</td></tr>
+    <tr><td><b>d_tail</b></td><td>12 × 128 × 128</td><td>768 KB</td><td>VRAM global</td><td>Pre-shuffle features</td></tr>
+    <tr><td><b>d_out</b></td><td>3 × 256 × 256</td><td>768 KB</td><td>VRAM global</td><td>Final RGB output (CHW, downloaded after)</td></tr>
+    <tr style="background:#0D2B1B;"><td colspan="2"><strong style="color:#3FB950;">Total VRAM used</strong></td><td class="good"><strong>~3.4 MB</strong></td><td class="good" colspan="2">Allocated once at startup — never freed until exit</td></tr>
+  </table>
+  <div class="note"><strong>Why pre-allocation matters:</strong> PyTorch's caching allocator still incurs overhead when dispatching kernels. CUDA C allocates everything once and reuses the same pointers for all 2,417 images — zero allocation cost per inference.</div>
+</div>
+
+<!-- ════════ PAGE 7: WHY FASTER ════════ -->
+<div class="page" id="p-why">
+  <div class="page-title">Why CUDA C Is 6× Faster Than PyTorch Slim</div>
+  <div class="page-desc">Same model. Same GPU. Same 5,640 weights. PyTorch slim: 106 FPS. CUDA C: 641 FPS. Every millisecond of that gap is framework overhead — not math.</div>
+
+  <div class="sec">Side-by-Side: Every Overhead Source</div>
+  <table>
+    <tr><th>Overhead Source</th><th>PyTorch Slim (GPU)</th><th>CUDA C</th></tr>
+    <tr><td><b>Weight memory location</b></td><td class="bad">VRAM global memory — 300–500 cycles per cache miss</td><td class="good">__constant__ on-chip — ~1 cycle, broadcast to all threads</td></tr>
+    <tr><td><b>Python GIL</b></td><td class="bad">Acquired and released for every tensor operation (dozens per forward pass)</td><td class="good">Zero Python — executable runs natively</td></tr>
+    <tr><td><b>Kernel dispatch chain</b></td><td class="bad">Python → C++ ATen → dispatcher → cuDNN → actual CUDA kernel (5+ layers)</td><td class="good">Direct cudaLaunchKernel — 1 layer</td></tr>
+    <tr><td><b>cuDNN convolution</b></td><td class="warn">Designed for large batches (training). For batch=1 at 128×128, most cuDNN overhead is workspace selection and algorithm dispatch, not actual math</td><td class="good">Custom kernel: 1 thread per output pixel, exactly sized for 4×128×128 input</td></tr>
+    <tr><td><b>Memory allocation</b></td><td class="bad">PyTorch's caching allocator runs per-op even when tensors fit in existing blocks</td><td class="good">All buffers pre-allocated at startup. Zero allocation per inference</td></tr>
+    <tr><td><b>Autograd metadata</b></td><td class="bad">Even under torch.no_grad(), Python-side tensor metadata (shape, dtype, device, version counter) is maintained per tensor</td><td class="good">Zero — no tensor objects, just raw pointers and CUDA calls</td></tr>
+    <tr><td><b>cuDNN workspace</b></td><td class="warn">cuDNN allocates and queries scratch memory for each conv layer call</td><td class="good">No workspace — direct thread-per-pixel accumulation</td></tr>
+    <tr><td><b>Synchronization</b></td><td class="bad">Python blocks on each op (effectively) due to GIL and op ordering</td><td class="good">All 9 kernels issued asynchronously on same stream — GPU pipelines them</td></tr>
+    <tr><td><b>Thread layout</b></td><td class="warn">cuDNN picks a general-purpose layout for a "conv2d on GPU" family of shapes</td><td class="good">Manually tuned: 16×16 blocks for conv, 256 threads for elementwise</td></tr>
+    <tr style="background:#0D2B1B;"><td><b>Effective compute fraction</b></td><td class="bad" style="color:#F85149;"><strong>~20% of wall time is actual GPU math</strong></td><td class="good"><strong>~95% of wall time is actual GPU math</strong></td></tr>
+  </table>
+
+  <div class="sec">The __constant__ Memory Effect in Detail</div>
+  <div class="grid2">
+    <div class="card orange">
+      <h3>PyTorch slim: weights in VRAM</h3>
+      <p>When a conv2d kernel runs in PyTorch, it calls cuDNN's cudnnConvolutionForward. The weight tensor lives in VRAM global memory. First access: cache miss → ~400 cycle penalty. Subsequent accesses within the same kernel call: may hit L2 (~20 cycles). But <strong>every forward pass starts cold again</strong> from PyTorch's perspective because it doesn't manage which weights stay in L2 between calls.</p>
+    </div>
+    <div class="card green">
+      <h3>CUDA C: weights in __constant__</h3>
+      <p>Weights loaded once at startup via <strong>cudaMemcpyToSymbol</strong>. They stay in the 64KB constant cache for the entire lifetime of the program. Every image, every kernel, reads them at 1 cycle. More importantly: when all threads in a warp (32 threads) read the <strong>same weight value</strong> (e.g. the same kernel coefficient applied to different pixels), the hardware <strong>broadcasts it in a single read</strong> — 32 threads pay 1 cycle total, not 32 cycles.</p>
+    </div>
+  </div>
+
+  <div class="note"><strong>The 6× summary:</strong> PyTorch spends ~80% of its time in framework overhead: Python GIL, dispatch layers, cuDNN algorithm selection, memory allocator. The GPU math itself is fast. CUDA C eliminates all the wrapper layers and reads weights from a cache that's ~400× faster than VRAM. The result: 106 FPS → 641 FPS on identical hardware with identical math.</div>
+</div>
+
+<!-- ════════ PAGE 8: RESULTS ════════ -->
+<div class="page" id="p-results">
+  <div class="page-title">Benchmark Results</div>
+  <div class="page-desc">Full dataset: 2,417 test images, CUDA C inference with real GPU timing. Both models measured on NVIDIA Quadro T1000, CUDA 13.3, sm_75.</div>
+
+  <div class="sec">New Module — Summary (weights_nm.bin)</div>
+  <div class="stats">
+    <div class="stat"><div class="stat-val" style="color:#3FB950;">24.85 dB</div><div class="stat-lbl">PSNR mean<br>vs Fujifilm GT</div></div>
+    <div class="stat"><div class="stat-val" style="color:#58A6FF;">0.8594</div><div class="stat-lbl">SSIM mean<br>perceptual quality</div></div>
+    <div class="stat"><div class="stat-val" style="color:#F0883E;">646 FPS</div><div class="stat-lbl">GPU throughput<br>100-iter benchmark</div></div>
+    <div class="stat"><div class="stat-val" style="color:#F85149;">134.93 dB</div><div class="stat-lbl">PSNR vs PyTorch ref<br>bit-identical verify</div></div>
+  </div>
+
+  <div class="sec">Original Model — Summary (weights.bin)</div>
+  <div class="stats">
+    <div class="stat"><div class="stat-val" style="color:#8B949E;">19.17 dB</div><div class="stat-lbl">PSNR mean</div></div>
+    <div class="stat"><div class="stat-val" style="color:#8B949E;">0.6458</div><div class="stat-lbl">SSIM mean</div></div>
+    <div class="stat"><div class="stat-val" style="color:#8B949E;">641 FPS</div><div class="stat-lbl">100-iter GPU FPS</div></div>
+    <div class="stat"><div class="stat-val" style="color:#8B949E;">453 FPS</div><div class="stat-lbl">single-pass avg</div></div>
+  </div>
+
+  <div class="sec">FPS Across All Implementations</div>
+  <div class="fps-row"><div class="fps-lbl"><span>CUDA C — New Module (100-iter dedicated benchmark)</span><span class="good">646 FPS</span></div><div class="fps-bg"><div class="fps-fill" style="width:99%; background:#238636;">__constant__ memory · 9 custom kernels · no Python</div></div></div>
+  <div class="fps-row"><div class="fps-lbl"><span>CUDA C — Original slim (100-iter dedicated benchmark)</span><span class="good">641 FPS</span></div><div class="fps-bg"><div class="fps-fill" style="width:99%; background:#1E4620;">same architecture, different 5640 weights</div></div></div>
+  <div class="fps-row"><div class="fps-lbl"><span>PyTorch slim (GPU, no_grad, batch=1)</span><span style="color:#F0883E; font-weight:700;">106 FPS</span></div><div class="fps-bg"><div class="fps-fill" style="width:16%; background:#7F3A00;">Python + cuDNN dispatch + VRAM weights</div></div></div>
+  <div class="fps-row"><div class="fps-lbl"><span>TFLite slim (CPU, XNNPACK, 8 threads)</span><span style="color:#F85149; font-weight:700;">92 FPS</span></div><div class="fps-bg"><div class="fps-fill" style="width:14%; background:#7F1D1D;">vectorized CPU inference, 5,640 params</div></div></div>
+  <div class="fps-row"><div class="fps-lbl"><span>TFLite original (CPU, XNNPACK, multi-branch not fused)</span><span style="color:#F85149; font-weight:700;">10 FPS</span></div><div class="fps-bg"><div class="fps-fill" style="width:2%; background:#4A0000;">110,984 params, sequential multi-branch</div></div></div>
+
+  <div class="sec">PSNR &amp; SSIM Distribution (2,417 images)</div>
+  <table>
+    <tr><th>Statistic</th><th>NM PSNR</th><th>Orig PSNR</th><th>NM SSIM</th><th>Orig SSIM</th></tr>
+    <tr><td>Mean</td><td class="good">24.853 dB</td><td>19.166 dB</td><td class="good">0.8594</td><td>0.6458</td></tr>
+    <tr><td>Std deviation</td><td class="good">4.439 dB</td><td class="warn">8.662 dB</td><td class="good">0.0748</td><td class="warn">0.3050</td></tr>
+    <tr><td>5th percentile (worst 5%)</td><td>~14 dB</td><td>~8 dB</td><td>~0.68</td><td>~0.08</td></tr>
+    <tr><td>Median (p50)</td><td class="good">~25 dB</td><td>~20 dB</td><td class="good">~0.87</td><td>~0.73</td></tr>
+    <tr><td>95th percentile (best 5%)</td><td>~31 dB</td><td>~34 dB</td><td>~0.95</td><td>~0.97</td></tr>
+    <tr><td>GPU latency mean</td><td>1.897 ms</td><td>2.207 ms</td><td colspan="2">—</td></tr>
+  </table>
+
+  <div class="note"><strong>New Module key finding:</strong> Not only higher PSNR (+5.7 dB) but also <strong>2× tighter standard deviation</strong> (4.4 vs 8.7 dB). The original model is inconsistent — excellent on easy scenes, very poor on hard ones. The New Module generalizes better, performing well across the full range of scene types. This is the multi-branch training advantage.</div>
+</div>
+
+<!-- ════════ PAGE 9: CPU vs GPU ════════ -->
+<div class="page" id="p-edge">
+  <div class="page-title">CPU vs GPU — Why Slim Helps Differently</div>
+  <div class="page-desc">On CPU (TFLite): slim gives 9× speedup. On GPU (CUDA): both models are identical after .slim(). The reason reveals a fundamental difference between CPU and GPU compute models.</div>
+
+  <div class="sec">CPU Compute Model — Sequential, Compute-Bound</div>
+  <div class="card orange">
+    <h3>Original → Slim on CPU (TFLite/XNNPACK): 10 FPS → 92 FPS = 9× speedup</h3>
+    <p>On CPU, branches run <strong>one after another</strong> (even with SIMD vectorization inside each branch). 10 branches = approximately 10× more multiply-accumulate operations (MACs). XNNPACK is highly optimized for individual convolutions, but cannot automatically parallelize 10 separate branch convolutions without explicit multi-threading overhead. So:</p><br>
+    <ul>
+      <li><strong>110,984 params × 4 bytes = 443 KB</strong> — doesn't fit in L1 or L2 cache → cold cache every inference</li>
+      <li><strong>Each branch = separate memory access pattern</strong> → cache thrashing across branches</li>
+      <li><strong>10× MACs + 10× memory reads</strong> → ~10× wall time</li>
+      <li><strong>After slim:</strong> 5,640 params = 22 KB → fits in L2, single cache-warm conv, 9.2× faster</li>
+    </ul>
+  </div>
+
+  <div class="sec">GPU Compute Model — Parallel, Memory-Bandwidth-Bound</div>
+  <div class="card blue">
+    <h3>Original → Slim on GPU: both end up at same architecture after .slim()</h3>
+    <p>On GPU, the bottleneck is not how many MACs you do — it's <strong>how fast you can feed data to the cores</strong>. The GPU has 2,560 CUDA cores that all need to be kept busy simultaneously. For a 12×128×128 activation tensor:</p><br>
+    <ul>
+      <li><strong>196,608 output pixels × 12 channels = 2.36M values to compute</strong> — keeps all cores busy regardless of branch count</li>
+      <li><strong>DRAM bandwidth (GDDR6, ~200 GB/s)</strong> is the ceiling — adding more branches reads more weights but activations stay the same size → bandwidth doesn't increase proportionally</li>
+      <li><strong>The GPU can overlap branch computation across SMs</strong> — even the original 10-branch model doesn't run branches strictly sequentially</li>
+      <li><strong>After slim:</strong> same activation sizes, same bandwidth cost, same time. The speedup from slim on GPU comes from elsewhere (fewer params → smaller model file, better cache usage) not raw FLOP reduction</li>
+    </ul>
+  </div>
+
+  <div class="sec">Where the Real GPU Speedup Comes From</div>
+  <table>
+    <tr><th>Factor</th><th>CPU (XNNPACK)</th><th>GPU (CUDA C)</th></tr>
+    <tr><td><b>Slim speedup source</b></td><td class="good">Fewer MACs, fewer branches to execute sequentially</td><td class="warn">Not MACs — framework elimination + constant memory</td></tr>
+    <tr><td><b>Compute bottleneck</b></td><td>FLOP count (MACs per second)</td><td>DRAM bandwidth (GB/s to feed the cores)</td></tr>
+    <tr><td><b>Cache behavior</b></td><td>Original 443 KB > L2 cache → misses. Slim 22 KB → fits → 4× faster reads</td><td>Constant memory: 22 KB fits on-chip regardless. Original would also fit (if in constant)</td></tr>
+    <tr><td><b>Branch parallelism</b></td><td class="bad">Sequential — 10 branches = 10× wall time</td><td class="good">Parallel across SMs — branches overlap in time</td></tr>
+    <tr><td><b>Main speedup lever</b></td><td>Reduce computation (slim)</td><td>Eliminate framework (CUDA C) + on-chip weights (__constant__)</td></tr>
+    <tr><td><b>Result</b></td><td>10 → 92 FPS (9.2×) from slim alone</td><td>106 → 641 FPS (6×) from CUDA C, not slim</td></tr>
+  </table>
+
+  <div class="sec">Summary: Three Different Speedup Mechanisms</div>
+  <div class="grid3">
+    <div class="card orange">
+      <h3>CPU: reduce compute</h3>
+      <p>10 branches → 1 branch = 10× fewer sequential operations. MACs are the bottleneck. Slim directly attacks the bottleneck.</p>
+    </div>
+    <div class="card blue">
+      <h3>GPU: eliminate framework</h3>
+      <p>PyTorch overhead = 80% of wall time. CUDA C removes Python, dispatch, cuDNN. Framework elimination — not model size — is the lever.</p>
+    </div>
+    <div class="card green">
+      <h3>GPU: on-chip weights</h3>
+      <p>Moving 22.1 KB weights from VRAM (300 cycles) to __constant__ cache (1 cycle) removes the weight-read bottleneck for every forward pass, permanently.</p>
+    </div>
+  </div>
+
+  <div class="note"><strong>The key insight:</strong> Reparameterization's main benefit is not the same on CPU and GPU. On CPU: fewer ops = fewer cycles. On GPU: the reparameterized 5,640 weights fit in __constant__ memory, and eliminating PyTorch's dispatch chain removes the real bottleneck. The 640 FPS is not because slim has fewer ops — it's because CUDA C runs those ops without any framework in the way.</div>
+</div>
+
+</div><!-- content -->
+</div><!-- layout -->
+
+<script>
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('p-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

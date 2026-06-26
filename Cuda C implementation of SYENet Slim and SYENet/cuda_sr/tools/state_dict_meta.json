@@ -1,0 +1,342 @@
+{
+ "head.bias": {
+  "storage_key": "0",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 12,
+  "offset": 0,
+  "shape": [
+   1,
+   12,
+   1,
+   1
+  ],
+  "stride": [
+   12,
+   1,
+   1,
+   1
+  ]
+ },
+ "head.block1.0.weight": {
+  "storage_key": "1",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 1200,
+  "offset": 0,
+  "shape": [
+   12,
+   4,
+   5,
+   5
+  ],
+  "stride": [
+   100,
+   25,
+   5,
+   1
+  ]
+ },
+ "head.block1.0.bias": {
+  "storage_key": "2",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 12,
+  "offset": 0,
+  "shape": [
+   12
+  ],
+  "stride": [
+   1
+  ]
+ },
+ "head.block1.1.weight": {
+  "storage_key": "3",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 12,
+  "offset": 0,
+  "shape": [
+   12
+  ],
+  "stride": [
+   1
+  ]
+ },
+ "head.block1.2.weight": {
+  "storage_key": "4",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 1296,
+  "offset": 0,
+  "shape": [
+   12,
+   12,
+   3,
+   3
+  ],
+  "stride": [
+   108,
+   9,
+   3,
+   1
+  ]
+ },
+ "head.block1.2.bias": {
+  "storage_key": "5",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 12,
+  "offset": 0,
+  "shape": [
+   12
+  ],
+  "stride": [
+   1
+  ]
+ },
+ "head.block2.weight": {
+  "storage_key": "6",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 1200,
+  "offset": 0,
+  "shape": [
+   12,
+   4,
+   5,
+   5
+  ],
+  "stride": [
+   100,
+   25,
+   5,
+   1
+  ]
+ },
+ "head.block2.bias": {
+  "storage_key": "7",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 12,
+  "offset": 0,
+  "shape": [
+   12
+  ],
+  "stride": [
+   1
+  ]
+ },
+ "body.bias": {
+  "storage_key": "8",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 12,
+  "offset": 0,
+  "shape": [
+   1,
+   12,
+   1,
+   1
+  ],
+  "stride": [
+   12,
+   1,
+   1,
+   1
+  ]
+ },
+ "body.block1.weight": {
+  "storage_key": "9",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 1296,
+  "offset": 0,
+  "shape": [
+   12,
+   12,
+   3,
+   3
+  ],
+  "stride": [
+   108,
+   9,
+   3,
+   1
+  ]
+ },
+ "body.block1.bias": {
+  "storage_key": "10",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 12,
+  "offset": 0,
+  "shape": [
+   12
+  ],
+  "stride": [
+   1
+  ]
+ },
+ "body.block2.weight": {
+  "storage_key": "11",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 144,
+  "offset": 0,
+  "shape": [
+   12,
+   12,
+   1,
+   1
+  ],
+  "stride": [
+   12,
+   1,
+   1,
+   1
+  ]
+ },
+ "body.block2.bias": {
+  "storage_key": "12",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 12,
+  "offset": 0,
+  "shape": [
+   12
+  ],
+  "stride": [
+   1
+  ]
+ },
+ "att.1.weight": {
+  "storage_key": "13",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 144,
+  "offset": 0,
+  "shape": [
+   12,
+   12,
+   1,
+   1
+  ],
+  "stride": [
+   12,
+   1,
+   1,
+   1
+  ]
+ },
+ "att.1.bias": {
+  "storage_key": "14",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 12,
+  "offset": 0,
+  "shape": [
+   12
+  ],
+  "stride": [
+   1
+  ]
+ },
+ "att.2.weight": {
+  "storage_key": "15",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 12,
+  "offset": 0,
+  "shape": [
+   12
+  ],
+  "stride": [
+   1
+  ]
+ },
+ "att.3.weight": {
+  "storage_key": "16",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 144,
+  "offset": 0,
+  "shape": [
+   12,
+   12,
+   1,
+   1
+  ],
+  "stride": [
+   12,
+   1,
+   1,
+   1
+  ]
+ },
+ "att.3.bias": {
+  "storage_key": "17",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 12,
+  "offset": 0,
+  "shape": [
+   12
+  ],
+  "stride": [
+   1
+  ]
+ },
+ "tail.1.weight": {
+  "storage_key": "18",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 81,
+  "offset": 0,
+  "shape": [
+   3,
+   3,
+   3,
+   3
+  ],
+  "stride": [
+   27,
+   9,
+   3,
+   1
+  ]
+ },
+ "tail.1.bias": {
+  "storage_key": "19",
+  "dtype": "float32",
+  "itemsize": 4,
+  "device": "cuda:0",
+  "storage_numel": 3,
+  "offset": 0,
+  "shape": [
+   3
+  ],
+  "stride": [
+   1
+  ]
+ }
+}

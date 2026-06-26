@@ -1,0 +1,178 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>SYENet CUDA C — 10 Sample Images</title>
+<style>
+* {box-sizing:border-box;margin:0;padding:0}
+body {font-family:'Segoe UI',sans-serif;background:#0D1117;color:#E6EDF3;padding:32px}
+h1 {font-size:20px;color:#58A6FF;margin-bottom:6px}
+.sub {font-size:12px;color:#8B949E;margin-bottom:24px}
+.note {background:#161B22;border:1px solid #F0883E;border-radius:8px;padding:12px 16px;
+  font-size:11px;color:#8B949E;margin-bottom:20px}
+.note strong {color:#F0883E}
+.stats {display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap}
+.stat {background:#161B22;border:1px solid #30363D;border-radius:8px;padding:12px 18px;text-align:center}
+.stat-val {font-size:20px;font-weight:800;margin-bottom:3px}
+.stat-lbl {font-size:9px;color:#8B949E}
+h2 {font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#F0883E;
+  border-bottom:1px solid #21262D;padding-bottom:6px;margin:24px 0 12px}
+table {width:100%;border-collapse:collapse;font-size:12px;margin-bottom:24px}
+th {background:#161B22;color:#8B949E;font-weight:600;padding:7px 10px;text-align:left;border-bottom:2px solid #21262D}
+td {padding:6px 10px;border-bottom:1px solid #21262D}
+tr:nth-child(even) td {background:#0D1117}
+tr:nth-child(odd) td {background:#161B22}
+</style></head><body>
+<h1>SYENet — 10 Sample Image Comparison</h1>
+<div class="sub">RAW input &nbsp;|&nbsp; Original model (ONNX Runtime) &nbsp;|&nbsp; New Module slim (CUDA C) &nbsp;|&nbsp; Fujifilm GT reference</div>
+<div class="note">
+  <strong>Note on models:</strong> "Original model (ONNX)" = multi-branch unfused SYEISPNet run via ONNX Runtime —
+  this is the training-time architecture before reparameterization.
+  "New Module slim (CUDA C)" = reparameterized SYEISPNetS run via the custom CUDA C binary (syenet_isp.exe) at 640+ FPS.
+  The slim model significantly outperforms the unfused model because reparameterization properly fuses all branches.
+</div>
+<div class="stats">
+  <div class="stat"><div class="stat-val" style="color:#58A6FF">7.40 dB</div><div class="stat-lbl">Orig ONNX avg PSNR</div></div>
+  <div class="stat"><div class="stat-val" style="color:#3FB950">26.49 dB</div><div class="stat-lbl">NM CUDA C avg PSNR</div></div>
+  <div class="stat"><div class="stat-val" style="color:#F0883E">+19.09 dB</div><div class="stat-lbl">NM improvement</div></div>
+  <div class="stat"><div class="stat-val" style="color:#E6EDF3">10</div><div class="stat-lbl">Images</div></div>
+</div>
+<h2>PSNR Table</h2>
+<table><tr><th>#</th><th>File</th><th>Orig ONNX PSNR</th><th>NM CUDA C PSNR</th><th>Diff</th><th>NM Latency</th></tr>
+<tr>
+      <td>1</td><td style="font-size:10px;color:#6E7681">100.png</td>
+      <td style="color:#58A6FF">9.428</td>
+      <td style="color:#3FB950;font-weight:700">18.197</td>
+      <td style="color:#3FB950;font-weight:700">+8.769</td>
+      <td>1.879 ms</td></tr><tr>
+      <td>2</td><td style="font-size:10px;color:#6E7681">12054.png</td>
+      <td style="color:#58A6FF">5.985</td>
+      <td style="color:#3FB950;font-weight:700">19.865</td>
+      <td style="color:#3FB950;font-weight:700">+13.880</td>
+      <td>1.779 ms</td></tr><tr>
+      <td>3</td><td style="font-size:10px;color:#6E7681">14259.png</td>
+      <td style="color:#58A6FF">4.206</td>
+      <td style="color:#3FB950;font-weight:700">34.023</td>
+      <td style="color:#3FB950;font-weight:700">+29.817</td>
+      <td>2.034 ms</td></tr><tr>
+      <td>4</td><td style="font-size:10px;color:#6E7681">16538.png</td>
+      <td style="color:#58A6FF">8.028</td>
+      <td style="color:#3FB950;font-weight:700">23.882</td>
+      <td style="color:#3FB950;font-weight:700">+15.854</td>
+      <td>2.069 ms</td></tr><tr>
+      <td>5</td><td style="font-size:10px;color:#6E7681">18795.png</td>
+      <td style="color:#58A6FF">4.519</td>
+      <td style="color:#3FB950;font-weight:700">26.873</td>
+      <td style="color:#3FB950;font-weight:700">+22.354</td>
+      <td>1.841 ms</td></tr><tr>
+      <td>6</td><td style="font-size:10px;color:#6E7681">21088.png</td>
+      <td style="color:#58A6FF">5.033</td>
+      <td style="color:#3FB950;font-weight:700">35.365</td>
+      <td style="color:#3FB950;font-weight:700">+30.332</td>
+      <td>1.765 ms</td></tr><tr>
+      <td>7</td><td style="font-size:10px;color:#6E7681">23021.png</td>
+      <td style="color:#58A6FF">6.575</td>
+      <td style="color:#3FB950;font-weight:700">24.576</td>
+      <td style="color:#3FB950;font-weight:700">+18.001</td>
+      <td>1.801 ms</td></tr><tr>
+      <td>8</td><td style="font-size:10px;color:#6E7681">3417.png</td>
+      <td style="color:#58A6FF">8.268</td>
+      <td style="color:#3FB950;font-weight:700">30.165</td>
+      <td style="color:#3FB950;font-weight:700">+21.897</td>
+      <td>1.984 ms</td></tr><tr>
+      <td>9</td><td style="font-size:10px;color:#6E7681">5790.png</td>
+      <td style="color:#58A6FF">10.087</td>
+      <td style="color:#3FB950;font-weight:700">24.308</td>
+      <td style="color:#3FB950;font-weight:700">+14.221</td>
+      <td>1.774 ms</td></tr><tr>
+      <td>10</td><td style="font-size:10px;color:#6E7681">7870.png</td>
+      <td style="color:#58A6FF">11.899</td>
+      <td style="color:#3FB950;font-weight:700">27.674</td>
+      <td style="color:#3FB950;font-weight:700">+15.775</td>
+      <td>1.825 ms</td></tr>
+<tr style="background:#0D2B1B">
+  <td colspan="2" style="color:#3FB950;font-weight:700">AVERAGE</td>
+  <td style="color:#58A6FF;font-weight:700">7.403 dB</td>
+  <td style="color:#3FB950;font-weight:700">26.493 dB</td>
+  <td style="color:#3FB950;font-weight:700">+19.090 dB</td><td></td>
+</tr></table>
+<h2>Visual Comparison  [RAW &nbsp; Original ONNX &nbsp; NM CUDA C &nbsp; Fujifilm GT]</h2>
+<div style="margin-bottom:24px">
+      <div style="font-size:12px;color:#8B949E;margin-bottom:6px">
+        <b style="color:#E6EDF3">#1 — 100.png</b> &nbsp;·&nbsp;
+        Orig ONNX: <span style="color:#58A6FF">9.43 dB</span> &nbsp;·&nbsp;
+        NM CUDA C: <span style="color:#3FB950">18.20 dB</span> &nbsp;·&nbsp;
+        Diff: <span style="color:#3FB950;font-weight:700">+8.77 dB</span>
+      </div>
+      <img src="sample_01_100.png" style="width:100%;border-radius:6px;border:1px solid #30363D">
+    </div><div style="margin-bottom:24px">
+      <div style="font-size:12px;color:#8B949E;margin-bottom:6px">
+        <b style="color:#E6EDF3">#2 — 12054.png</b> &nbsp;·&nbsp;
+        Orig ONNX: <span style="color:#58A6FF">5.99 dB</span> &nbsp;·&nbsp;
+        NM CUDA C: <span style="color:#3FB950">19.86 dB</span> &nbsp;·&nbsp;
+        Diff: <span style="color:#3FB950;font-weight:700">+13.88 dB</span>
+      </div>
+      <img src="sample_02_12054.png" style="width:100%;border-radius:6px;border:1px solid #30363D">
+    </div><div style="margin-bottom:24px">
+      <div style="font-size:12px;color:#8B949E;margin-bottom:6px">
+        <b style="color:#E6EDF3">#3 — 14259.png</b> &nbsp;·&nbsp;
+        Orig ONNX: <span style="color:#58A6FF">4.21 dB</span> &nbsp;·&nbsp;
+        NM CUDA C: <span style="color:#3FB950">34.02 dB</span> &nbsp;·&nbsp;
+        Diff: <span style="color:#3FB950;font-weight:700">+29.82 dB</span>
+      </div>
+      <img src="sample_03_14259.png" style="width:100%;border-radius:6px;border:1px solid #30363D">
+    </div><div style="margin-bottom:24px">
+      <div style="font-size:12px;color:#8B949E;margin-bottom:6px">
+        <b style="color:#E6EDF3">#4 — 16538.png</b> &nbsp;·&nbsp;
+        Orig ONNX: <span style="color:#58A6FF">8.03 dB</span> &nbsp;·&nbsp;
+        NM CUDA C: <span style="color:#3FB950">23.88 dB</span> &nbsp;·&nbsp;
+        Diff: <span style="color:#3FB950;font-weight:700">+15.85 dB</span>
+      </div>
+      <img src="sample_04_16538.png" style="width:100%;border-radius:6px;border:1px solid #30363D">
+    </div><div style="margin-bottom:24px">
+      <div style="font-size:12px;color:#8B949E;margin-bottom:6px">
+        <b style="color:#E6EDF3">#5 — 18795.png</b> &nbsp;·&nbsp;
+        Orig ONNX: <span style="color:#58A6FF">4.52 dB</span> &nbsp;·&nbsp;
+        NM CUDA C: <span style="color:#3FB950">26.87 dB</span> &nbsp;·&nbsp;
+        Diff: <span style="color:#3FB950;font-weight:700">+22.35 dB</span>
+      </div>
+      <img src="sample_05_18795.png" style="width:100%;border-radius:6px;border:1px solid #30363D">
+    </div><div style="margin-bottom:24px">
+      <div style="font-size:12px;color:#8B949E;margin-bottom:6px">
+        <b style="color:#E6EDF3">#6 — 21088.png</b> &nbsp;·&nbsp;
+        Orig ONNX: <span style="color:#58A6FF">5.03 dB</span> &nbsp;·&nbsp;
+        NM CUDA C: <span style="color:#3FB950">35.37 dB</span> &nbsp;·&nbsp;
+        Diff: <span style="color:#3FB950;font-weight:700">+30.33 dB</span>
+      </div>
+      <img src="sample_06_21088.png" style="width:100%;border-radius:6px;border:1px solid #30363D">
+    </div><div style="margin-bottom:24px">
+      <div style="font-size:12px;color:#8B949E;margin-bottom:6px">
+        <b style="color:#E6EDF3">#7 — 23021.png</b> &nbsp;·&nbsp;
+        Orig ONNX: <span style="color:#58A6FF">6.58 dB</span> &nbsp;·&nbsp;
+        NM CUDA C: <span style="color:#3FB950">24.58 dB</span> &nbsp;·&nbsp;
+        Diff: <span style="color:#3FB950;font-weight:700">+18.00 dB</span>
+      </div>
+      <img src="sample_07_23021.png" style="width:100%;border-radius:6px;border:1px solid #30363D">
+    </div><div style="margin-bottom:24px">
+      <div style="font-size:12px;color:#8B949E;margin-bottom:6px">
+        <b style="color:#E6EDF3">#8 — 3417.png</b> &nbsp;·&nbsp;
+        Orig ONNX: <span style="color:#58A6FF">8.27 dB</span> &nbsp;·&nbsp;
+        NM CUDA C: <span style="color:#3FB950">30.16 dB</span> &nbsp;·&nbsp;
+        Diff: <span style="color:#3FB950;font-weight:700">+21.90 dB</span>
+      </div>
+      <img src="sample_08_3417.png" style="width:100%;border-radius:6px;border:1px solid #30363D">
+    </div><div style="margin-bottom:24px">
+      <div style="font-size:12px;color:#8B949E;margin-bottom:6px">
+        <b style="color:#E6EDF3">#9 — 5790.png</b> &nbsp;·&nbsp;
+        Orig ONNX: <span style="color:#58A6FF">10.09 dB</span> &nbsp;·&nbsp;
+        NM CUDA C: <span style="color:#3FB950">24.31 dB</span> &nbsp;·&nbsp;
+        Diff: <span style="color:#3FB950;font-weight:700">+14.22 dB</span>
+      </div>
+      <img src="sample_09_5790.png" style="width:100%;border-radius:6px;border:1px solid #30363D">
+    </div><div style="margin-bottom:24px">
+      <div style="font-size:12px;color:#8B949E;margin-bottom:6px">
+        <b style="color:#E6EDF3">#10 — 7870.png</b> &nbsp;·&nbsp;
+        Orig ONNX: <span style="color:#58A6FF">11.90 dB</span> &nbsp;·&nbsp;
+        NM CUDA C: <span style="color:#3FB950">27.67 dB</span> &nbsp;·&nbsp;
+        Diff: <span style="color:#3FB950;font-weight:700">+15.78 dB</span>
+      </div>
+      <img src="sample_10_7870.png" style="width:100%;border-radius:6px;border:1px solid #30363D">
+    </div>
+</body></html>

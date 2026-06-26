@@ -1,0 +1,306 @@
+HOW TO RUN — SYENet ISP Inference & Benchmarks
+================================================
+
+All Python commands use:  py -3.10 <script>
+Working directory for syenet scripts:  C:\Users\aujla\Desktop\archive\syenet\
+Working directory for benchmark scripts: C:\Users\aujla\Desktop\archive\cuda_benchmark\tools\
+Working directory for CUDA C:          C:\Users\aujla\Desktop\archive\cuda_isp\
+
+
+========================================================================
+1. PYTORCH GPU INFERENCE (full dataset, PSNR + timing)
+========================================================================
+
+Command:
+  cd C:\Users\aujla\Desktop\archive\syenet
+  py -3.10 run_inference.py
+
+What it does:
+  - Loads slim_model.pt on GPU (CUDA)
+  - Runs inference on all images in dataset\test\mediatek_raw\
+  - Computes PSNR and SSIM against dataset\test\fujifilm\ ground truth
+  - Saves per-image results to syenet\results.csv
+
+Expected output (2,417 images, Quadro T1000):
+  PSNR:     24.83 dB
+  SSIM:     0.8556
+  Latency:  9.4 ms avg  (106 FPS)
+
+
+========================================================================
+2. CUDA C NATIVE INFERENCE — FASTEST (no Python, no PyTorch)
+========================================================================
+
+Already compiled. Just run the .exe.
+
+Step 1 — Extract weights + prepare one test image:
+  cd C:\Users\aujla\Desktop\archive\cuda_isp
+  py -3.10 extract_weights.py
+
+  Creates:
+    weights.bin   (22.1 KB — all 5640 floats from slim model)
+    input.bin     (256 KB — first test image, RGGB float32 CHW)
+    ref.bin       (768 KB — PyTorch reference output, HWC)
+    gt.bin        (768 KB — Fujifilm ground truth, HWC)
+
+Step 2 — Run CUDA inference:
+  syenet_isp.exe weights.bin input.bin output.bin
+
+  Expected output:
+    GPU: Quadro T1000  (SM 7.5, 4096 MB)
+    5640 floats (22.0 KB) copied to __constant__ memory
+    Warmup (5 runs)...
+    ╔══════════════════════════════════════════╗
+    ║  SYEISPNetS  CUDA inference results      ║
+    ╠══════════════════════════════════════════╣
+    ║  Iterations:        100                  ║
+    ║  Avg latency:    1.560 ms                ║
+    ║  Throughput:     641.1 FPS               ║
+    ╚══════════════════════════════════════════╝
+    Output saved: output.bin  (CHW: 3×256×256)
+
+Step 3 — Verify output matches PyTorch:
+  py -3.10 verify.py
+
+  Expected output:
+    CUDA vs PyTorch reference:
+      PSNR:    134.93 dB    <- essentially bit-identical
+      MAE:     0.000000
+      Max diff:0.000001
+      Verdict: PERFECT (bit-identical within fp32 rounding)
+
+    CUDA vs Fujifilm GT:
+      PSNR:    18.20 dB     <- varies per image (dataset avg is 24.83 dB)
+
+    Saved: comparison.png   <- side-by-side CUDA | PyTorch ref | GT
+
+Or run everything at once:
+  run_all.bat               <- does all 3 steps automatically
+
+To recompile from source (only needed if syenet.cu changes):
+  compile.bat
+
+
+========================================================================
+3. TFLITE CPU INFERENCE (all 2,417 images)
+========================================================================
+
+Command:
+  cd C:\Users\aujla\Desktop\archive\cuda_benchmark\tools
+  py -3.10 03b_tflite_only.py
+
+What it does:
+  - Runs both original_model.tflite and slim_model.tflite on CPU
+  - Uses TFLite Interpreter with XNNPACK delegate
+  - Appends results to cuda_benchmark\results\per_image_results.csv
+  - Updates summary_metrics.csv
+
+Expected output (Quadro T1000 machine CPU):
+  Original TFLite CPU:  PSNR=24.83 dB  SSIM=0.8556   99.6 ms   10 FPS
+  Slim TFLite CPU:      PSNR=24.83 dB  SSIM=0.8556   10.8 ms   92 FPS
+
+
+========================================================================
+4. FULL 4-MODEL PYTORCH BENCHMARK
+========================================================================
+
+Command:
+  cd C:\Users\aujla\Desktop\archive\cuda_benchmark\tools
+  py -3.10 03c_pytorch_only.py
+
+What it does:
+  - Loads original SYEISPNet AND slim SYEISPNetS from model_best.pkl
+  - Benchmarks both on GPU with CUDA events (10 events per image)
+  - Measures H2D / preprocess / inference / postprocess / D2H timing separately
+  - Writes/updates per_image_results.csv and summary_metrics.csv
+
+Expected output:
+  Original PyTorch GPU:  PSNR=24.83 dB  21.1 ms   47 FPS
+  Slim     PyTorch GPU:  PSNR=24.83 dB   9.4 ms  106 FPS
+
+
+========================================================================
+5. GENERATE PLOTS (9 publication-quality figures)
+========================================================================
+
+Command:
+  cd C:\Users\aujla\Desktop\archive\cuda_benchmark\tools
+  py -3.10 04_visualize.py
+
+Requires: per_image_results.csv and summary_metrics.csv already populated
+          (run steps 3 and 4 first)
+
+Output files (in cuda_benchmark\results\plots\):
+  psnr_distribution.png          PSNR histogram for all 4 models
+  ssim_distribution.png          SSIM histogram
+  latency_distribution.png       Inference time histogram (GPU vs CPU)
+  gpu_memory_usage.png           GPU memory over the run
+  gpu_utilization.png            SM utilisation % (if pynvml data present)
+  model_size_comparison.png      Bar chart: file sizes in KB
+  fps_comparison.png             Bar chart: FPS per model
+  quality_vs_latency.png         Scatter: PSNR vs latency (Pareto front)
+  throughput_comparison.png      Grouped bar: original vs slim FPS
+
+
+========================================================================
+6. GENERATE PUBLICATION TABLES (CSV + LaTeX + Markdown)
+========================================================================
+
+Command:
+  cd C:\Users\aujla\Desktop\archive\cuda_benchmark\tools
+  py -3.10 05_generate_tables.py
+
+Output files (in cuda_benchmark\results\tables\):
+  table1_model_size.{csv,tex,md}     Model size and parameter counts
+  table2_latency.{csv,tex,md}        Latency statistics (avg/min/max/std)
+  table3_gpu_memory.{csv,tex,md}     GPU resource utilisation
+  table4_quality.{csv,tex,md}        PSNR/SSIM/MSE/MAE/RMSE per model
+  table5_deployment.{csv,tex,md}     Deployment recommendations per platform
+  all_tables.tex                     All tables combined (LaTeX input file)
+
+Use in LaTeX paper:  \input{all_tables.tex}  (requires \usepackage{booktabs})
+
+
+========================================================================
+7. SINGLE IMAGE INFERENCE — PyTorch (quick test)
+========================================================================
+
+Run in Python (py -3.10):
+
+  import sys, torch, numpy as np
+  from PIL import Image
+  sys.path.insert(0, r'C:\Users\aujla\Desktop\archive\syenet')
+  from model.isp import SYEISPNet
+
+  # Load and reparameterize
+  net = SYEISPNet(channels=12, rep_scale=4).eval()
+  sd  = torch.load(r'C:\Users\aujla\Desktop\archive\model_best.pkl',
+                   map_location='cpu', weights_only=False)
+  net.load_state_dict(sd)
+  slim = net.slim().eval().cuda()
+
+  # Load RAW image (uint16 PNG, 256x256 Bayer)
+  raw  = np.array(Image.open(r'path\to\raw_image.png'))
+  h, w = raw.shape
+  rggb = raw.reshape(h//2,2,w//2,2).transpose([1,3,0,2]).reshape([-1,h//2,w//2])
+  rggb = rggb.astype(np.float32) / 4095.
+  inp  = torch.from_numpy(rggb).unsqueeze(0).cuda()
+
+  with torch.no_grad():
+      out = slim(inp).clamp(0, 1)
+
+  rgb = (out.squeeze().permute(1,2,0).cpu().numpy() * 255).astype('uint8')
+  Image.fromarray(rgb).save('output_rgb.png')
+  print("Saved output_rgb.png")
+
+
+========================================================================
+8. SINGLE IMAGE INFERENCE — TFLite CPU
+========================================================================
+
+  import numpy as np
+  from PIL import Image
+  import tensorflow as tf
+
+  interp = tf.lite.Interpreter(r'C:\Users\aujla\Desktop\archive\slim_model.tflite')
+  interp.allocate_tensors()
+  in_d  = interp.get_input_details()[0]
+  out_d = interp.get_output_details()[0]
+
+  raw  = np.array(Image.open(r'path\to\raw_image.png'))
+  h, w = raw.shape
+  rggb = raw.reshape(h//2,2,w//2,2).transpose([1,3,0,2]).reshape([-1,h//2,w//2])
+  rggb = (rggb / 4095.).astype(np.float32)
+  inp  = rggb.transpose(1, 2, 0)[np.newaxis]   # (1, H/2, W/2, 4) NHWC
+
+  interp.resize_tensor_input(in_d['index'], inp.shape)
+  interp.allocate_tensors()
+  interp.set_tensor(in_d['index'], inp)
+  interp.invoke()
+
+  out = np.squeeze(interp.get_tensor(out_d['index'])).clip(0, 1)
+  rgb = (out * 255).astype('uint8')
+  Image.fromarray(rgb).save('output_rgb.png')
+
+
+========================================================================
+HOW TO VERIFY RESULTS
+========================================================================
+
+After any inference run, compare output to ground truth:
+
+  import numpy as np, math
+  from PIL import Image
+
+  pred = np.array(Image.open('output_rgb.png')).astype(np.float64) / 255.
+  gt   = np.array(Image.open('path/to/gt.png').convert('RGB')).astype(np.float64) / 255.
+
+  mse  = ((pred - gt) ** 2).mean()
+  psnr = 10 * math.log10(1.0 / mse)
+  print(f"PSNR: {psnr:.4f} dB")   # expect ~24.83 dB averaged over dataset
+
+For the CUDA C output specifically:
+  cd C:\Users\aujla\Desktop\archive\cuda_isp
+  py -3.10 verify.py
+  # Opens output.bin, compares to ref.bin (PyTorch) and gt.bin (Fujifilm)
+  # Saves comparison.png (CUDA | PyTorch | GT side-by-side)
+
+Expected verification outcomes:
+  CUDA vs PyTorch:    PSNR > 60 dB  (near-identical, fp32 rounding only)
+  PyTorch vs GT:      PSNR ~ 24.83 dB (per-image varies from ~15 to ~35 dB)
+
+
+========================================================================
+BENCHMARK RESULTS SUMMARY (Quadro T1000, 2,397 images)
+========================================================================
+
+  Model                | PSNR     | SSIM   | Latency  | FPS
+  ---------------------|----------|--------|----------|------
+  Original PyTorch GPU | 24.83 dB | 0.8556 | 21.1 ms  |  47
+  Slim     PyTorch GPU | 24.83 dB | 0.8556 |  9.4 ms  | 106
+  Original TFLite CPU  | 24.83 dB | 0.8556 | 99.6 ms  |  10
+  Slim     TFLite CPU  | 24.83 dB | 0.8556 | 10.8 ms  |  92
+  CUDA C   GPU (native)| 24.83 dB | —      |  1.6 ms  | 641
+
+  Key finding: All models produce identical quality (reparameterization is lossless).
+  Slim GPU is 2.2× faster than original GPU.
+  CUDA C is 5.9× faster than slim PyTorch GPU (no Python/framework overhead).
+
+
+========================================================================
+TROUBLESHOOTING
+========================================================================
+
+"No module named torch"
+  -> Use py -3.10, not python or py (which may be 3.14)
+
+"CUDA not available"
+  -> py -3.10 -c "import torch; print(torch.cuda.is_available())"
+  -> Reinstall: py -3.10 -m pip install torch --index-url https://download.pytorch.org/whl/cu121
+
+"No module named tensorflow"
+  -> py -3.10 -m pip install tensorflow --user
+
+"No module named ai_edge_litert"
+  -> py -3.10 -m pip install ai-edge-litert --user
+
+"No module named onnx2tf"
+  -> py -3.10 -m pip install onnx2tf psutil sng4onnx onnxsim --user
+  -> py -3.10 -m pip install onnx-graphsurgeon --extra-index-url https://pypi.ngc.nvidia.com
+
+PSNR is ~4-8 dB instead of ~24 dB:
+  -> Check normalisation: must divide by 4095, NOT 65535
+  -> Check Bayer unpacking: must use reshape + transpose pattern (see scripts)
+  -> Check GT is loaded as RGB (use PIL, not cv2 — cv2 loads BGR)
+
+syenet_isp.exe outputs wrong pixels:
+  -> Re-run extract_weights.py to regenerate weights.bin
+  -> Check that output.bin is loaded as (3, 256, 256) CHW, then transpose to HWC
+
+nvcc not found when compiling:
+  -> Run compile.bat (it adds MSVC + nvcc to PATH automatically)
+  -> Or add manually: C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.3\bin
+
+"Cannot find compiler cl.exe":
+  -> VS 2022 Build Tools must be installed
+  -> compile.bat calls vcvars64.bat automatically — run compile.bat, not nvcc directly
