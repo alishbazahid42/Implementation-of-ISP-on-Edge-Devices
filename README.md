@@ -25,6 +25,11 @@ This repository contains the source code, custom hardware designs, and comprehen
 
 Our research systematically evaluates the strict technical trade-offs between execution speed, hardware power constraints, and visual image quality. We bridge the gap between high-level Python AI training and pure silicon hardware design, comparing Classical (rule-based) ISPs against Learned (Neural Network-driven) ISPs.
 
+### 🌟 Novelty & Academic Contribution
+While deploying Neural ISPs on edge hardware is an active research field, the vast majority of existing solutions rely on high-level synthesis (HLS) tools to auto-compile models into hardware. **Our project takes a highly specialized, full-stack approach:**
+1. **Custom Silicon Logic:** We bypassed auto-compilers to manually engineer a custom FSM-driven datapath operating at the INT8 MAC level via a single DSP48E1 unit on the FPGA. 
+2. **The Full-Stack Ecosystem:** We built an end-to-end pipeline that spans from low-level silicon FPGA design, to manual CUDA C GPU acceleration (641+ FPS), all the way up to engineering a mathematical zero-shot domain adaptation pipeline for a modern consumer smartphone (Pixel 7a).
+
 ---
 
 ## 🚀 Key Achievements
@@ -44,12 +49,12 @@ We deployed and benchmarked four different ISPs (FastOpenISP, InfiniteISP, SYENe
 * **Hardware Evaluated:** Raspberry Pi 3, Raspberry Pi 5, Intel Neural Compute Stick 2 (NCS2).
 * **Metrics Analyzed:** Precise latency (FPS) vs visual reconstruction quality (PSNR/SSIM).
 
-### 2. [High-Performance CUDA GPU Acceleration](./Cuda%C%implementation%of%SYENet%Slim%and%SYENet)
+### 2. [High-Performance CUDA GPU Acceleration](./Cuda%20C%20implementation%20of%20SYENet%20Slim%20and%20SYENet)
 To address the heavy computational overhead of neural ISPs, we manually translated the lightweight SYENet-Slim architecture from Python into highly optimized **CUDA C**.
 * **Deployment:** Natively running on an NVIDIA Quadro T1000 GPU (896 CUDA cores).
 * **Performance:** Massive acceleration (641 FPS) while maintaining pristine image quality (24.85 dB PSNR).
 
-### 3. Custom FPGA Hardware Design
+### 3. [Custom FPGA Hardware Design](./Hardware%20Implementation%20of%20SYENet%20Slim%20on%20FPGA(NEXYS%204%20-Artrix%207))
 We engineered a custom hardware architecture for the SYENet Slim pipeline designed to operate within strict embedded constraints.
 * **Device:** Nexys-4 / XC7A100T (Artix-7 FPGA).
 * **Datapath:** FSM-driven logic executing one INT8 MAC per clock cycle via a single DSP48E1 unit.
@@ -68,9 +73,14 @@ AI models are typically highly sensor-specific. We proved the generalizability o
 ---
 
 ## 🔗 Additional Resources
-* **Datasets & Output Images:** The full Google Pixel 7a custom mobile dataset and the high-resolution benchmarking results are hosted externally due to size constraints. You can download the dataset here: [🔗 Google Drive: SYENET_Pixel7a_Custom_Dataset](https://drive.google.com/drive/folders/1XHF59HnqhQiPCTLFdz6z6k-wkiPBaQ70?usp=sharing)
-* **SYENet Repository:** The base architecture used in this research was adapted from the official [sanechips-multimedia/syenet](https://github.com/sanechips-multimedia/syenet) repository.
+* **Datasets & Output Images:** High-resolution benchmarking results and the full Google Pixel 7a custom mobile dataset are hosted externally due to size constraints. You can access them here: 
+  * [🔗 Google Drive: SYENET_Pixel7a_Custom_Dataset](https://drive.google.com/drive/folders/1XHF59HnqhQiPCTLFdz6z6k-wkiPBaQ70?usp=sharing)
+  * [🔗 Google Drive: Benchmarking Full Results](https://drive.google.com/drive/folders/1DdzcnSLQPj7ml81z7FJ1bOuxpQtP6J1o?usp=drive_link) 
+* **Base Architectures:** The original ISP frameworks evaluated in this research can be found at their official repositories:
+  * [SYENet (Learned ISP)](https://github.com/sanechips-multimedia/syenet)
+  * [Fast-OpenISP (Classical ISP)](https://github.com/QiuJueqin/fast-openISP)
+  * [Infinite-ISP (Classical ISP)](https://github.com/10x-Engineers/Infinite-ISP)
 
 <br>
 
-*Special thanks to Engr. Nauman Latif (Ph.D. fellow) for guidance and support throughout this Final Year Project.*
+*Special thanks to our supervisors Sir Rehan Hafiz and Sir Rehan Ahmad, as well as Engr. Nauman Latif (Ph.D. fellow), for their continuous guidance and support throughout this Final Year Project.*

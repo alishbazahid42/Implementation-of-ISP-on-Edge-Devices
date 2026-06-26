@@ -69,7 +69,7 @@ git clone https://github.com/sanechips-multimedia/syenet.git
 ```
 
 ### 3. Request Pre-trained Weights
-The `model_best_slim.pkl` weights file is required to run inference. Please email `BSCE220029@itu.edu.pk` to request the weights, ensuring that you keep `BSCE22007@itu.edu.pk` and `BSCE220035@itu.edu.pk` in CC. 
+The `model_best_slim.pkl` weights file is required to run inference. Please email `arham.ha25@gmail.com` to request the weights, ensuring that you keep `moizahmad6886@gmail.com` and `thealishbazahid@gmail.com` in CC. 
 
 In your email, please explicitly include:
 * Your full name and occupation.
